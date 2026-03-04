@@ -1,0 +1,55 @@
+# --- Dependências ---
+node_modules/
+jspm_packages/
+
+# --- Build e Distribuição ---
+dist/
+dist-electron/
+release/
+out/
+*.app
+*.exe
+*.dmg
+*.deb
+*.rpm
+
+# --- Logs e Runtime ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+.eslintcache
+
+# --- Variáveis de Ambiente e Segredos ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.auth.key
+*.pem
+
+# --- IDEs e Editores ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# --- TypeScript ---
+tsconfig.tsbuildinfo
+
+# --- Electron Store / Local Config ---
+# Não ignore o .keymaps da raiz, pois ele é o padrão do projeto.
+# Mas ignore arquivos de configuração que contenham dados sensíveis de usuários ou paths locais.
+config.json
+
+# --- Docker / Kubernetes (Temporários) ---
+.docker/
+.kube/config
+kube-config*.yaml
+docker-compose.override.yml

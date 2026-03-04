@@ -1,0 +1,220 @@
+/* 
+  Estilos globais - WCAG 2.2 nível AA compliant
+  Fundo preto, alto contraste, acessibilidade primeiro
+*/
+
+@import "./variables.css";
+
+/* Reset e normalização */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-default);
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-fg-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Zoom support - aplicado ao body */
+body.zoom-80 {
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+
+body.zoom-90 {
+  transform: scale(0.9);
+  transform-origin: top left;
+}
+
+body.zoom-100 {
+  transform: scale(1);
+}
+
+body.zoom-110 {
+  transform: scale(1.1);
+  transform-origin: top left;
+}
+
+body.zoom-125 {
+  transform: scale(1.25);
+  transform-origin: top left;
+}
+
+body.zoom-150 {
+  transform: scale(1.5);
+  transform-origin: top left;
+}
+
+body.zoom-175 {
+  transform: scale(1.75);
+  transform-origin: top left;
+}
+
+body.zoom-200 {
+  transform: scale(2);
+  transform-origin: top left;
+}
+
+/* Tipografia */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  margin-bottom: var(--spacing-sm);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Links */
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+a:focus {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Focus visível - obrigatório para acessibilidade */
+:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Skip to main content link */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-accent);
+  color: var(--color-bg-primary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-to-main:focus {
+  top: 0;
+}
+
+/* Scrollbar customizado */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--border-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Tabelas acessíveis */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--spacing-lg);
+}
+
+th, td {
+  border: var(--border-width) solid var(--color-border);
+  padding: var(--spacing-md);
+  text-align: left;
+}
+
+th {
+  background-color: var(--color-bg-secondary);
+  font-weight: var(--font-weight-bold);
+}
+
+tr:nth-child(even) {
+  background-color: var(--color-bg-secondary);
+}
+
+/* Ao vivo (aria-live) - sem visual distrator */
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Elementos ocultos de leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Suporte a alto contraste (Windows) */
+@media (prefers-contrast: more) {
+  :root {
+    --color-border: #FFFFFF;
+    --color-bg-hover: #404040;
+    --color-bg-active: #505050;
+  }
+}
+
+/* Suporte a modo escuro - já aplicado por padrão */
+@media (prefers-color-scheme: dark) {
+  /* Cores já estão em alto contraste no padrão */
+}
+
+/* Suporte a modo claro (se usuário forçar) */
+@media (prefers-color-scheme: light) {
+  /* Mantém alto contraste invertido */
+  :root {
+    --color-bg-primary: #FFFFFF;
+    --color-fg-primary: #000000;
+    --color-bg-secondary: #E8E8E8;
+    --color-border: #777777;
+    --color-bg-hover: #CCCCCC;
+    --color-bg-active: #BBBBBB;
+  }
+}
