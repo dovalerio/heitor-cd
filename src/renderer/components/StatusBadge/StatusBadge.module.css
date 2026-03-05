@@ -1,0 +1,59 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 2px var(--spacing-sm);
+  border-radius: 9999px;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold, 700);
+  border: 1px solid transparent;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.statusRunning {
+  color: var(--color-success);
+  border-color: var(--color-success);
+  background-color: rgba(0, 255, 0, 0.08);
+}
+
+.statusExited {
+  color: var(--color-fg-disabled);
+  border-color: var(--color-border);
+  background-color: var(--color-bg-disabled);
+}
+
+.statusPaused {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+  background-color: rgba(255, 255, 0, 0.08);
+}
+
+.statusRestarting {
+  color: var(--color-info);
+  border-color: var(--color-info);
+  background-color: rgba(0, 204, 255, 0.08);
+}
+
+.statusCreated {
+  color: var(--color-info);
+  border-color: var(--color-info);
+}
+
+.statusRemoving {
+  color: var(--color-error);
+  border-color: var(--color-error);
+  background-color: rgba(255, 0, 0, 0.08);
+}
+
+.statusDead {
+  color: var(--color-error);
+  border-color: var(--color-error);
+  background-color: rgba(255, 0, 0, 0.12);
+}

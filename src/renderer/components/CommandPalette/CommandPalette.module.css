@@ -1,0 +1,99 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: calc(var(--z-index-modal, 1000) + 1);
+}
+
+.palette {
+  background-color: var(--color-bg-secondary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  width: 560px;
+  max-width: 95vw;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9);
+}
+
+.searchWrapper {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search {
+  width: 100%;
+  background-color: var(--color-bg-primary);
+  color: var(--color-fg-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-lg);
+  font-family: var(--font-family-default);
+  box-sizing: border-box;
+}
+
+.search::placeholder {
+  color: var(--color-fg-disabled);
+}
+
+.search:focus {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-xs) 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  color: var(--color-fg-primary);
+}
+
+.item:hover,
+.itemActive {
+  background-color: var(--color-bg-hover);
+}
+
+.itemLabel {
+  flex: 1;
+  font-size: var(--font-size-base);
+}
+
+.itemDescription {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-secondary);
+}
+
+.itemShortcut {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-secondary);
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: 1px 6px;
+  font-family: var(--font-family-mono);
+  white-space: nowrap;
+}
+
+.empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--color-fg-secondary);
+  font-size: var(--font-size-base);
+}

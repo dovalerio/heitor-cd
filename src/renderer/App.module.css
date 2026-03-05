@@ -1,0 +1,131 @@
+.appShell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--color-bg-primary);
+  color: var(--color-fg-primary);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  flex-shrink: 0;
+  border-right: var(--border-width) solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  overflow: hidden;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-accent);
+  font-family: var(--font-family-mono);
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: var(--spacing-xs) 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.navItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-fg-secondary);
+  gap: 2px;
+}
+
+.navItem:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-fg-primary);
+}
+
+.navItem:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.navItemActive {
+  color: var(--color-accent);
+  border-left-color: var(--color-accent);
+  background-color: var(--color-bg-hover);
+}
+
+.navLabel {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.navShortcut {
+  font-size: 10px;
+  color: var(--color-fg-disabled);
+  font-family: var(--font-family-mono);
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.sidebarFooter {
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
+}
+
+.footerBtn {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-fg-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-default);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.footerBtn:hover { background-color: var(--color-bg-hover); color: var(--color-fg-primary); }
+.footerBtn:focus-visible { outline: var(--border-width-focus) solid var(--color-accent); outline-offset: 2px; }
+
+.monitoringOff {
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.zoomIndicator {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-disabled);
+  font-family: var(--font-family-mono);
+  text-align: center;
+}
+
+.mainContent {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

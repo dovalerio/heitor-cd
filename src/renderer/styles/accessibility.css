@@ -1,0 +1,136 @@
+/**
+ * accessibility.css
+ *
+ * Global accessibility helpers:
+ *   - Screen-reader-only utility (.sr-only)
+ *   - Focus-visible ring (WCAG 2.2 AA 2.4.11 - Focus Appearance)
+ *   - Zoom level classes applied by useZoom
+ *   - High-contrast focus rings for interactive elements
+ */
+
+/* --------------------------------------------------------------------------
+   Screen-reader only
+   -------------------------------------------------------------------------- */
+
+/**
+ * Visually hides an element while keeping it accessible to assistive
+ * technologies.  Use on labels, live regions, and skip-links that should
+ * not be shown on screen.
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/**
+ * Reveals the element when it receives focus (e.g. skip-link pattern).
+ */
+.sr-only:focus,
+.sr-only:focus-within {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* --------------------------------------------------------------------------
+   Global focus-visible ring
+   -------------------------------------------------------------------------- */
+
+/**
+ * WCAG 2.2 Success Criterion 2.4.11 — Focus Appearance
+ * The ring must have a minimum area of perimeter × 2 CSS pixels,
+ * contrast ratio ≥ 3:1 against adjacent colours, and must not be
+ * obscured by author-created content.
+ */
+:focus-visible {
+  outline: 3px solid var(--color-accent, #00ff00);
+  outline-offset: 2px;
+}
+
+/* Remove the default (non-focus-visible) outline to avoid double rings in
+   browsers that still show :focus outlines alongside :focus-visible. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   Zoom level classes — applied by useZoom to document.body
+   --------------------------------------------------------------------------
+   Base font size is 16 px (100 %).
+   Each class overrides font-size on body; relative units (em/rem) elsewhere
+   scale automatically.
+   -------------------------------------------------------------------------- */
+
+body.zoom-80  { font-size: 12.8px; }   /* 16 × 0.80 */
+body.zoom-90  { font-size: 14.4px; }   /* 16 × 0.90 */
+body.zoom-100 { font-size: 16px;   }   /* default   */
+body.zoom-110 { font-size: 17.6px; }   /* 16 × 1.10 */
+body.zoom-125 { font-size: 20px;   }   /* 16 × 1.25 */
+body.zoom-150 { font-size: 24px;   }   /* 16 × 1.50 */
+body.zoom-175 { font-size: 28px;   }   /* 16 × 1.75 */
+body.zoom-200 { font-size: 32px;   }   /* 16 × 2.00 */
+
+/* --------------------------------------------------------------------------
+   High-contrast focus ring for interactive elements
+   -------------------------------------------------------------------------- */
+
+/**
+ * Reinforce the global :focus-visible rule with a thicker, high-contrast
+ * ring specifically for the three most common interactive element types.
+ * Uses a double-ring technique (outline + box-shadow) for maximum
+ * contrast against both dark and light backgrounds.
+ */
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--color-accent, #00ff00);
+  outline-offset: 2px;
+  box-shadow: var(--box-shadow-focus, 0 0 0 3px rgba(0, 255, 0, 0.5));
+  /* Ensure the ring is never clipped */
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced-motion — respect user preference
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   High-contrast mode (forced-colors / Windows HC)
+   -------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid ButtonText;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 3px solid ButtonText;
+    box-shadow: none;
+  }
+}

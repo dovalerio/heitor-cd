@@ -1,0 +1,55 @@
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-xl);
+  box-sizing: border-box;
+}
+
+.content {
+  text-align: center;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.icon {
+  font-size: 64px;
+  line-height: 1;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-fg-primary);
+  margin: 0;
+}
+
+.description {
+  color: var(--color-fg-secondary);
+  font-size: var(--font-size-lg);
+  margin: 0;
+}
+
+.featureList {
+  text-align: left;
+  color: var(--color-fg-primary);
+  list-style: disc;
+  padding-left: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.note {
+  color: var(--color-fg-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.note code {
+  font-family: var(--font-family-mono);
+  color: var(--color-accent);
+}

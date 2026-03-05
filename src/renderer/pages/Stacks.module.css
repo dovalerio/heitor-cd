@@ -1,0 +1,107 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-md);
+  gap: var(--spacing-md);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-fg-primary);
+  margin: 0;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: var(--border-width) solid var(--color-error);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  color: var(--color-error);
+  flex-shrink: 0;
+}
+
+.loading, .empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  color: var(--color-fg-secondary);
+  text-align: center;
+}
+
+.stackList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.stackCard {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.stackHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.stackName {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-fg-primary);
+  margin: 0;
+}
+
+.configFile {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-secondary);
+  font-family: var(--font-family-mono);
+  margin: 4px 0 0;
+}
+
+.serviceList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.serviceItem {
+  font-size: var(--font-size-sm);
+  background-color: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  padding: 2px var(--spacing-sm);
+  color: var(--color-fg-primary);
+  font-family: var(--font-family-mono);
+}
+
+.stackActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-xs);
+}

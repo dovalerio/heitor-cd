@@ -1,0 +1,58 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-fg-primary);
+}
+
+.required {
+  color: var(--color-error);
+}
+
+.input {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-fg-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-default);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: var(--color-fg-disabled);
+}
+
+.input:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  outline-offset: 0;
+  border-color: var(--color-accent);
+}
+
+.input:disabled {
+  background-color: var(--color-bg-disabled);
+  color: var(--color-fg-disabled);
+  cursor: not-allowed;
+}
+
+.inputInvalid {
+  border-color: var(--color-error);
+  box-shadow: var(--box-shadow-error);
+}
+
+.helper {
+  font-size: var(--font-size-sm);
+  color: var(--color-fg-secondary);
+}
+
+.error {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
