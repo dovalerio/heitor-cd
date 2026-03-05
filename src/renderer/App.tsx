@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Dashboard } from '@/pages/Dashboard';
 import { Composer } from '@/pages/Composer';
 import { Stacks } from '@/pages/Stacks';
-import { ImagesNetworks } from '@/pages/ImagesNetworks';
+import { Images } from '@/pages/Images';
+import { Networks } from '@/pages/Networks';
 import { Logs } from '@/pages/Logs';
 import { Cloud } from '@/pages/Cloud';
 import { CommandPalette, Command } from '@/components/CommandPalette/CommandPalette';
@@ -15,7 +16,7 @@ import type { KeymapFile } from '../types/keymap';
 import { IPC } from '../types/ipc';
 import styles from './App.module.css';
 
-type PageId = 'dashboard' | 'composer' | 'stacks' | 'images-networks' | 'logs' | 'cloud';
+type PageId = 'dashboard' | 'composer' | 'stacks' | 'images' | 'networks' | 'logs' | 'cloud';
 
 interface NavTab {
   id: PageId;
@@ -27,9 +28,10 @@ const TABS: NavTab[] = [
   { id: 'dashboard', label: 'Dashboard', shortcut: 'Ctrl+1' },
   { id: 'composer', label: 'Composer', shortcut: 'Ctrl+2' },
   { id: 'stacks', label: 'Stacks', shortcut: 'Ctrl+3' },
-  { id: 'images-networks', label: 'Images & Networks', shortcut: 'Ctrl+4' },
+  { id: 'images', label: 'Imagens', shortcut: 'Ctrl+4' },
+  { id: 'networks', label: 'Redes', shortcut: 'Ctrl+5' },
   { id: 'logs', label: 'Logs', shortcut: 'Alt+4' },
-  { id: 'cloud', label: 'Cloud', shortcut: 'Ctrl+5' },
+  { id: 'cloud', label: 'Cloud', shortcut: 'Ctrl+6' },
 ];
 
 export const App: React.FC = () => {
@@ -82,15 +84,41 @@ export const App: React.FC = () => {
     };
   }, [isMonitoring]);
 
+  // Centraliza navegação entre abas + anúncio para leitores de tela
+  const navigateTo = useCallback((target: PageId | 'next' | 'prev') => {
+    setCurrentPage((prev) => {
+      let next: PageId;
+      if (target === 'next') {
+        const idx = TABS.findIndex((t) => t.id === prev);
+        next = TABS[(idx + 1) % TABS.length].id;
+      } else if (target === 'prev') {
+        const idx = TABS.findIndex((t) => t.id === prev);
+        next = TABS[(idx - 1 + TABS.length) % TABS.length].id;
+      } else {
+        next = target;
+      }
+      const tab = TABS.find((t) => t.id === next)!;
+      // Adia o anúncio para depois do re-render evitar colisão de estado
+      setTimeout(() => setAnnounceMessage(`Aba ${tab.label} ativada`), 0);
+      return next;
+    });
+  }, []);
+
   // Global keydown handler for navigation shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === '1') { e.preventDefault(); setCurrentPage('dashboard'); }
-      else if (e.ctrlKey && e.key === '2') { e.preventDefault(); setCurrentPage('composer'); }
-      else if (e.ctrlKey && e.key === '3') { e.preventDefault(); setCurrentPage('stacks'); }
-      else if (e.ctrlKey && e.key === '4') { e.preventDefault(); setCurrentPage('images-networks'); }
-      else if (e.altKey && e.key === '4') { e.preventDefault(); setCurrentPage('logs'); }
-      else if (e.ctrlKey && e.key === '5') { e.preventDefault(); setCurrentPage('cloud'); }
+      // Ctrl+Tab / Ctrl+Shift+Tab: navegar entre abas ciclicamente
+      if (e.ctrlKey && e.key === 'Tab') {
+        e.preventDefault();
+        if (e.shiftKey) { navigateTo('prev'); } else { navigateTo('next'); }
+      }
+      else if (e.ctrlKey && e.key === '1') { e.preventDefault(); navigateTo('dashboard'); }
+      else if (e.ctrlKey && e.key === '2') { e.preventDefault(); navigateTo('composer'); }
+      else if (e.ctrlKey && e.key === '3') { e.preventDefault(); navigateTo('stacks'); }
+      else if (e.ctrlKey && e.key === '4') { e.preventDefault(); navigateTo('images'); }
+      else if (e.ctrlKey && e.key === '5') { e.preventDefault(); navigateTo('networks'); }
+      else if (e.altKey && e.key === '4') { e.preventDefault(); navigateTo('logs'); }
+      else if (e.ctrlKey && e.key === '6') { e.preventDefault(); navigateTo('cloud'); }
       else if (e.ctrlKey && e.key === 'k') { e.preventDefault(); setShowCommandPalette(true); }
       else if (e.key === 'F5') { e.preventDefault(); setAnnounceMessage('Tela atualizada.'); }
       else if (e.ctrlKey && e.altKey && e.key === 'm') {
@@ -102,12 +130,12 @@ export const App: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isMonitoring]);
+  }, [isMonitoring, navigateTo]);
 
   const handleOpenLogs = useCallback((id: string, name: string) => {
     setLogsTarget({ id, name });
-    setCurrentPage('logs');
-  }, []);
+    navigateTo('logs');
+  }, [navigateTo]);
 
   // Docker event handler passed to pages
   const onDockerEvent = useCallback(
@@ -126,8 +154,22 @@ export const App: React.FC = () => {
       label: `Ir para ${t.label}`,
       shortcut: t.shortcut,
       category: 'Navegação',
-      action: () => setCurrentPage(t.id),
+      action: () => navigateTo(t.id),
     })),
+    {
+      id: 'nav-next-tab',
+      label: 'Próxima aba',
+      shortcut: 'Ctrl+Tab',
+      category: 'Navegação',
+      action: () => navigateTo('next'),
+    },
+    {
+      id: 'nav-prev-tab',
+      label: 'Aba anterior',
+      shortcut: 'Ctrl+Shift+Tab',
+      category: 'Navegação',
+      action: () => navigateTo('prev'),
+    },
     {
       id: 'toggle-monitoring',
       label: isMonitoring ? 'Pausar monitoramento' : 'Retomar monitoramento',
@@ -174,8 +216,10 @@ export const App: React.FC = () => {
         return <Composer dockerService={dockerService} />;
       case 'stacks':
         return <Stacks dockerService={dockerService} />;
-      case 'images-networks':
-        return <ImagesNetworks dockerService={dockerService} />;
+      case 'images':
+        return <Images dockerService={dockerService} />;
+      case 'networks':
+        return <Networks dockerService={dockerService} />;
       case 'logs':
         return (
           <Logs
@@ -217,7 +261,7 @@ export const App: React.FC = () => {
                 ]
                   .filter(Boolean)
                   .join(' ')}
-                onClick={() => setCurrentPage(tab.id)}
+                onClick={() => navigateTo(tab.id)}
                 type="button"
               >
                 <span className={styles.navLabel}>{tab.label}</span>
