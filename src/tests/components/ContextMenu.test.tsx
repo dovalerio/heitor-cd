@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ContextMenu, ContextMenuEntry } from '../../renderer/components/ContextMenu/ContextMenu';
 
 const defaultItems: ContextMenuEntry[] = [
@@ -21,7 +21,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const menuItems = screen.getAllByRole('menuitem');
     expect(menuItems).toHaveLength(3); // start, stop, remove
@@ -34,7 +34,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const separators = screen.getAllByRole('separator');
     expect(separators).toHaveLength(1);
@@ -50,7 +50,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={onSelect}
         onClose={onClose}
-      />
+      />,
     );
     await user.click(screen.getByRole('menuitem', { name: 'Start' }));
     expect(onSelect).toHaveBeenCalledWith('start');
@@ -65,14 +65,13 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={onClose}
-      />
+      />,
     );
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('click outside the menu calls onClose', async () => {
-    const user = userEvent.setup();
+  it('click outside the menu calls onClose', () => {
     const onClose = vi.fn();
     render(
       <div>
@@ -83,7 +82,7 @@ describe('ContextMenu', () => {
           onSelect={vi.fn()}
           onClose={onClose}
         />
-      </div>
+      </div>,
     );
     // Fire mousedown outside the menu
     fireEvent.mouseDown(screen.getByTestId('outside'));
@@ -91,16 +90,9 @@ describe('ContextMenu', () => {
   });
 
   it('disabled item has disabled attribute', () => {
-    const items: ContextMenuEntry[] = [
-      { id: 'action', label: 'Action', disabled: true },
-    ];
+    const items: ContextMenuEntry[] = [{ id: 'action', label: 'Action', disabled: true }];
     render(
-      <ContextMenu
-        items={items}
-        position={defaultPosition}
-        onSelect={vi.fn()}
-        onClose={vi.fn()}
-      />
+      <ContextMenu items={items} position={defaultPosition} onSelect={vi.fn()} onClose={vi.fn()} />,
     );
     const btn = screen.getByRole('menuitem', { name: 'Action' });
     expect(btn).toBeDisabled();
@@ -113,7 +105,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const removeBtn = screen.getByRole('menuitem', { name: 'Remove' });
     expect(removeBtn.className).toContain('itemDanger');
@@ -127,7 +119,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const startBtn = screen.getByRole('menuitem', { name: 'Start' });
     const stopBtn = screen.getByRole('menuitem', { name: 'Stop' });
@@ -145,7 +137,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const startBtn = screen.getByRole('menuitem', { name: 'Start' });
     const stopBtn = screen.getByRole('menuitem', { name: 'Stop' });
@@ -163,7 +155,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const startBtn = screen.getByRole('menuitem', { name: 'Start' });
     const removeBtn = screen.getByRole('menuitem', { name: 'Remove' });
@@ -180,7 +172,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     const startBtn = screen.getByRole('menuitem', { name: 'Start' });
     expect(document.activeElement).toBe(startBtn);
@@ -194,7 +186,7 @@ describe('ContextMenu', () => {
         onSelect={vi.fn()}
         onClose={vi.fn()}
         data-testid="context-menu"
-      />
+      />,
     );
     expect(screen.getByTestId('context-menu')).toBeInTheDocument();
   });
@@ -206,7 +198,7 @@ describe('ContextMenu', () => {
         position={defaultPosition}
         onSelect={vi.fn()}
         onClose={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText('Start')).toBeInTheDocument();
     expect(screen.getByText('Stop')).toBeInTheDocument();

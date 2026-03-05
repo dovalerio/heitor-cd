@@ -35,12 +35,7 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={[
-        styles.button,
-        styles[variant],
-        styles[size],
-        fullWidth ? styles.fullWidth : '',
-      ]
+      className={[styles.button, styles[variant], styles[size], fullWidth ? styles.fullWidth : '']
         .filter(Boolean)
         .join(' ')}
       onClick={disabled ? undefined : onClick}

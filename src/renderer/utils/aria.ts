@@ -8,7 +8,7 @@
 export const getButtonAriaProps = (
   label: string,
   disabled: boolean = false,
-  pressed?: boolean
+  pressed?: boolean,
 ) => ({
   role: 'button',
   'aria-label': label,
@@ -25,7 +25,7 @@ export const getInputAriaProps = (
   label: string,
   required: boolean = false,
   invalid: boolean = false,
-  describedBy?: string
+  describedBy?: string,
 ) => ({
   id,
   'aria-label': label,
@@ -37,11 +37,7 @@ export const getInputAriaProps = (
 /**
  * Cria props acessíveis para um toggle/checkbox
  */
-export const getToggleAriaProps = (
-  checked: boolean,
-  label: string,
-  disabled: boolean = false
-) => ({
+export const getToggleAriaProps = (checked: boolean, label: string, disabled: boolean = false) => ({
   role: 'switch',
   'aria-checked': checked,
   'aria-label': label,
@@ -54,7 +50,7 @@ export const getToggleAriaProps = (
  */
 export const getListAriaProps = (
   itemCount: number,
-  orientation: 'vertical' | 'horizontal' = 'vertical'
+  orientation: 'vertical' | 'horizontal' = 'vertical',
 ) => ({
   role: 'list',
   'aria-orientation': orientation,
@@ -64,11 +60,7 @@ export const getListAriaProps = (
 /**
  * Cria props acessíveis para um item de lista
  */
-export const getListItemAriaProps = (
-  index: number,
-  total: number,
-  selected: boolean = false
-) => ({
+export const getListItemAriaProps = (index: number, total: number, selected: boolean = false) => ({
   role: 'listitem',
   'aria-selected': selected,
   'aria-posinset': index + 1,
@@ -78,10 +70,7 @@ export const getListItemAriaProps = (
 /**
  * Cria props acessíveis para uma árvore
  */
-export const getTreeAriaProps = (
-  label: string,
-  multiSelect: boolean = false
-) => ({
+export const getTreeAriaProps = (label: string, multiSelect: boolean = false) => ({
   role: 'tree',
   'aria-label': label,
   'aria-multiselectable': multiSelect,
@@ -96,7 +85,7 @@ export const getTreeNodeAriaProps = (
   level: number,
   posInSet: number,
   setSize: number,
-  label: string
+  label: string,
 ) => ({
   role: 'treeitem',
   'aria-expanded': expanded,
@@ -110,11 +99,7 @@ export const getTreeNodeAriaProps = (
 /**
  * Cria props acessíveis para um modal/dialog
  */
-export const getDialogAriaProps = (
-  label: string,
-  describedBy?: string,
-  modal: boolean = true
-) => ({
+export const getDialogAriaProps = (label: string, describedBy?: string, modal: boolean = true) => ({
   role: modal ? 'dialog' : 'alertdialog',
   'aria-label': label,
   'aria-modal': modal,
@@ -124,10 +109,7 @@ export const getDialogAriaProps = (
 /**
  * Cria props acessíveis para uma região ao vivo anúncio
  */
-export const getLiveRegionAriaProps = (
-  polite: boolean = true,
-  atomic: boolean = true
-) => ({
+export const getLiveRegionAriaProps = (polite: boolean = true, atomic: boolean = true) => ({
   'aria-live': polite ? 'polite' : 'assertive',
   'aria-atomic': atomic,
   role: 'status',
@@ -146,7 +128,7 @@ export const generateId = (prefix: string): string => {
 export const announceToScreenReader = (
   message: string,
   assertive: boolean = false,
-  duration: number = 1000
+  duration: number = 1000,
 ): void => {
   const region = document.createElement('div');
   region.setAttribute('aria-live', assertive ? 'assertive' : 'polite');
@@ -166,12 +148,12 @@ export const announceToScreenReader = (
  */
 export const setFocusWithAnnouncement = (
   element: HTMLElement | null,
-  announcement?: string
+  announcement?: string,
 ): void => {
   if (!element) return;
 
   element.focus({ preventScroll: false });
-  
+
   if (announcement) {
     announceToScreenReader(announcement);
   }
@@ -182,7 +164,7 @@ export const setFocusWithAnnouncement = (
  */
 export const getFocusableProps = () => ({
   tabIndex: 0,
-  'onKeyDown': (e: KeyboardEvent) => {
+  onKeyDown: (e: KeyboardEvent) => {
     // Permite navegação com setas
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       e.preventDefault();
@@ -195,7 +177,7 @@ export const getFocusableProps = () => ({
  */
 export const createFocusTrap = (container: HTMLElement): (() => void) => {
   const focusableElements = container.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
   );
 
   if (focusableElements.length === 0) return () => {};

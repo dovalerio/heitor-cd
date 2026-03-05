@@ -31,7 +31,7 @@ export const Modal: React.FC<ModalProps> = ({
       // Focus the first focusable element inside the modal
       setTimeout(() => {
         const focusable = dialogRef.current?.querySelector<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
         focusable?.focus();
       }, 50);
@@ -56,8 +56,8 @@ export const Modal: React.FC<ModalProps> = ({
 
       const focusableEls = Array.from(
         container.querySelectorAll<HTMLElement>(
-          'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
-        )
+          'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        ),
       );
 
       if (focusableEls.length === 0) {

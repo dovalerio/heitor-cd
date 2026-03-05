@@ -67,7 +67,8 @@
   flex-shrink: 0;
 }
 
-.empty, .loading {
+.empty,
+.loading {
   flex: 1;
   display: flex;
   align-items: center;

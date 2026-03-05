@@ -90,7 +90,8 @@ export const darkHighContrastTheme: Theme = {
     fgDisabled: '#666666',
   },
   typography: {
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     fontFamilyMono: '"Courier New", Courier, monospace',
     fontSizeBase: '16px',
     fontSizes: {

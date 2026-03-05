@@ -336,7 +336,7 @@ describe('setFocusWithAnnouncement', () => {
     const el = document.createElement('button');
     document.body.appendChild(el);
     // Remove any existing live regions first
-    document.querySelectorAll('[aria-live]').forEach(n => n.remove());
+    document.querySelectorAll('[aria-live]').forEach((n) => n.remove());
     setFocusWithAnnouncement(el);
     const region = document.body.querySelector('[aria-live]');
     expect(region).toBeNull();
@@ -424,7 +424,7 @@ describe('createFocusTrap', () => {
   });
 
   it('cleanup removes the keydown listener', () => {
-    const [first, , last] = addButtons(3);
+    const [, , last] = addButtons(3);
     const cleanup = createFocusTrap(container);
 
     cleanup();

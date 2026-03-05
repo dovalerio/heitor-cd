@@ -37,7 +37,11 @@ describe('Modal', () => {
   });
 
   it('renders children inside the modal', () => {
-    render(<Modal {...defaultProps}><p>Custom child content</p></Modal>);
+    render(
+      <Modal {...defaultProps}>
+        <p>Custom child content</p>
+      </Modal>,
+    );
     expect(screen.getByText('Custom child content')).toBeInTheDocument();
   });
 
@@ -68,8 +72,7 @@ describe('Modal', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('calls onClose when clicking the backdrop', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+  it('calls onClose when clicking the backdrop', () => {
     const onClose = vi.fn();
     const { container } = render(<Modal {...defaultProps} onClose={onClose} />);
     // The backdrop is the outermost div with role="presentation"
@@ -103,14 +106,11 @@ describe('Modal', () => {
   });
 
   it('focus trap: Tab on last focusable button wraps to first', () => {
-    render(
-      <Modal
-        {...defaultProps}
-        footer={<button type="button">Confirm</button>}
-      />
-    );
+    render(<Modal {...defaultProps} footer={<button type="button">Confirm</button>} />);
     // Advance timers for setTimeout in the useEffect focus logic
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
 
     const buttons = screen.getAllByRole('button');
     // Last button should be "Confirm", focus it

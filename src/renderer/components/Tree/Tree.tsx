@@ -42,7 +42,10 @@ export const Tree: React.FC<TreeProps> = ({
   const toggleExpand = useCallback((id: string) => {
     setNodeStates((prev) => ({
       ...prev,
-      [id]: { ...getState(id), expanded: !prev[id]?.expanded },
+      [id]: {
+        ...(prev[id] ?? { expanded: false, selected: false }),
+        expanded: !prev[id]?.expanded,
+      },
     }));
   }, []);
 
@@ -50,11 +53,14 @@ export const Tree: React.FC<TreeProps> = ({
     (node: TreeNode) => {
       setNodeStates((prev) => ({
         ...prev,
-        [node.id]: { ...getState(node.id), selected: !prev[node.id]?.selected },
+        [node.id]: {
+          ...(prev[node.id] ?? { expanded: false, selected: false }),
+          selected: !prev[node.id]?.selected,
+        },
       }));
       onSelect?.(node);
     },
-    [onSelect]
+    [onSelect],
   );
 
   const flatNodes = useCallback((): TreeNode[] => {
@@ -62,7 +68,7 @@ export const Tree: React.FC<TreeProps> = ({
     const traverse = (list: TreeNode[]) => {
       for (const n of list) {
         result.push(n);
-        if (n.children?.length && getState(n.id).expanded) {
+        if (n.children?.length && nodeStates[n.id]?.expanded) {
           traverse(n.children);
         }
       }
@@ -127,15 +133,11 @@ export const Tree: React.FC<TreeProps> = ({
         level,
         index + 1,
         parentCount,
-        node.label
+        node.label,
       );
 
       return (
-        <li
-          key={node.id}
-          role="none"
-          className={styles.nodeWrapper}
-        >
+        <li key={node.id} role="none" className={styles.nodeWrapper}>
           <div
             role={ariaProps.role}
             aria-expanded={hasChildren ? ariaProps['aria-expanded'] : undefined}
@@ -144,7 +146,9 @@ export const Tree: React.FC<TreeProps> = ({
             aria-posinset={ariaProps['aria-posinset']}
             aria-setsize={ariaProps['aria-setsize']}
             aria-label={ariaProps['aria-label']}
-            tabIndex={focusedId === node.id || (focusedId === null && index === 0 && level === 1) ? 0 : -1}
+            tabIndex={
+              focusedId === node.id || (focusedId === null && index === 0 && level === 1) ? 0 : -1
+            }
             className={[
               styles.node,
               state.selected ? styles.nodeSelected : '',

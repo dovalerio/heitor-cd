@@ -188,7 +188,7 @@ describe('trapFocus', () => {
   });
 
   it('returns a cleanup function that removes the keydown listener', () => {
-    const [first, , last] = addButtons(3);
+    const [, , last] = addButtons(3);
     const cleanup = trapFocus(container);
 
     cleanup();

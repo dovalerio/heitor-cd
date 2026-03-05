@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { Tree, TreeNode } from '../../renderer/components/Tree/Tree';
@@ -114,7 +114,9 @@ describe('Tree', () => {
     node2.focus();
     await user.keyboard('{Enter}');
 
-    expect(onActivate).toHaveBeenCalledWith(expect.objectContaining({ id: 'node-2', label: 'Node 2' }));
+    expect(onActivate).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'node-2', label: 'Node 2' }),
+    );
   });
 
   it('Space calls onSelect with the node', async () => {
@@ -126,7 +128,9 @@ describe('Tree', () => {
     node2.focus();
     await user.keyboard(' ');
 
-    expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({ id: 'node-2', label: 'Node 2' }));
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'node-2', label: 'Node 2' }),
+    );
   });
 
   it('expanded node shows children', async () => {

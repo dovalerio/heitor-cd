@@ -24,7 +24,9 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: 12px;
   position: relative;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
   flex-shrink: 0;
 }
 

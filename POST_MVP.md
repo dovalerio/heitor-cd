@@ -5,18 +5,19 @@ Itens estão ordenados por prioridade.
 
 ---
 
-## 1. Fase EKS / Cloud (Alta prioridade)
+## 1. Fase Cloud (Alta prioridade)
 
-O MVP entrega apenas um placeholder na aba **Cloud**. As seguintes funcionalidades precisam ser implementadas:
+O MVP entrega apenas um placeholder na aba **Cloud**. As seguintes funcionalidades precisam ser implementadas. A implementação deve ser **agnóstica ao provedor de nuvem**, suportando AWS EKS, Google GKE, Azure AKS e clusters Kubernetes locais (Minikube, Kind, k3s) através de uma interface unificada.
 
-### 1.1 Autenticação AWS
-- Integração com AWS SDK (`@aws-sdk/client-eks`, `@aws-sdk/client-sts`).
-- Suporte a múltiplos perfis AWS (`~/.aws/credentials`).
-- Troca de contexto entre Docker local e kubectl/EKS via UI.
+### 1.1 Autenticação e contexto de cluster
+- Leitura e seleção de contextos do `~/.kube/config` (padrão kubeconfig).
+- Suporte a múltiplos contextos/clusters cadastrados localmente.
+- Troca de contexto entre Docker local e qualquer cluster Kubernetes via UI.
 - Feedback visual de estado da conexão (conectado / sem credenciais / erro).
+- Integração opcional com credenciais de provedores específicos (AWS, GCP, Azure) de forma plugável, sem criar dependência obrigatória de nenhum SDK de nuvem no core do app.
 
-### 1.2 Visualização de recursos EKS
-- Listagem de clusters EKS disponíveis.
+### 1.2 Visualização de recursos Kubernetes
+- Listagem de clusters/contextos disponíveis.
 - Visualização de Namespaces, Pods, Deployments, Services, ConfigMaps.
 - Status de saúde dos pods em tempo real.
 - Árvore de recursos (Cluster → Namespace → Workloads) navegável por teclado.
@@ -29,7 +30,39 @@ O MVP entrega apenas um placeholder na aba **Cloud**. As seguintes funcionalidad
 
 ---
 
-## 2. Persistência de estado com electron-store (Alta prioridade)
+## 2. Desacoplamento Electron / Web (Alta prioridade)
+
+Atualmente o renderer depende diretamente do `window.electron` exposto pelo preload do Electron. Para que a mesma base de código funcione também como **aplicação web** (hospedada em servidor ou rodando localmente no navegador), é necessário introduzir uma camada de abstração de plataforma.
+
+### 2.1 Interface `PlatformAdapter`
+- Definir em `src/types/platform.ts` a interface `PlatformAdapterInterface` com todos os contratos de operação (Docker, keymaps, eventos).
+- Implementar dois adaptadores concretos:
+  - `ElectronAdapter` — encapsula as chamadas existentes via `window.electron` (IPC).
+  - `WebAdapter` — encapsula chamadas HTTP/WebSocket a um backend local (ex.: daemon Docker exposto via API REST ou servidor proxy Node.js).
+- Exportar um singleton `platformAdapter` resolvido em tempo de inicialização com base em `isElectron()`.
+
+### 2.2 Utilitário de detecção de plataforma
+- Criar `src/renderer/utils/platform.ts` com a função `isElectron(): boolean` (detecta presença de `window.electron`).
+- Todos os serviços do renderer devem consumir `platformAdapter` em vez de `window.electron` diretamente.
+
+### 2.3 Refatoração de serviços
+- `dockerService`, `keymapsService`, `themeService` e `eventBusService` passam a delegar ao `platformAdapter`.
+- Nenhuma referência a `window.electron` deve existir fora de `ElectronAdapter`.
+- O hook `useDockerEvents` deve aceitar tanto eventos IPC (Electron) quanto WebSocket (web).
+
+### 2.4 Build web
+- Adicionar script `npm run build:web` que executa `vite build` sem o processo main do Electron, gerando bundle estático em `dist-web/`.
+- Configurar `vite.config.ts` para aceitar a variável de ambiente `VITE_PLATFORM=web` e excluir imports do Electron do bundle.
+- Documentar como servir o build web com um backend proxy (ex.: `docker-socket-proxy` ou servidor Express simples).
+
+### 2.5 Persistência multiplataforma
+- No modo Electron, continuar usando `electron-store` (processo main via IPC).
+- No modo web, usar `localStorage` / `IndexedDB` via adaptador próprio com a mesma interface.
+- A seleção do mecanismo de persistência deve ser transparente para os componentes React.
+
+---
+
+## 3. Persistência de estado com electron-store (Alta prioridade)
 
 O MVP usa `localStorage` para zoom e preferência de tema, mas o ideal é persistir via `electron-store` no processo main:
 
@@ -42,7 +75,7 @@ O MVP usa `localStorage` para zoom e preferência de tema, mas o ideal é persis
 
 ---
 
-## 3. Internacionalização completa / i18n (Alta prioridade)
+## 4. Internacionalização completa / i18n (Alta prioridade)
 
 O MVP não implementa traduções apesar de ter `i18next` e `react-i18next` como dependências.
 
@@ -53,7 +86,7 @@ O MVP não implementa traduções apesar de ter `i18next` e `react-i18next` como
 
 ---
 
-## 4. Testes end-to-end (Alta prioridade)
+## 5. Testes end-to-end (Alta prioridade)
 
 O MVP cobre testes unitários (≥80%). Falta:
 
@@ -67,7 +100,7 @@ O MVP cobre testes unitários (≥80%). Falta:
 
 ---
 
-## 5. Auto-updater (Média prioridade)
+## 6. Auto-updater (Média prioridade)
 
 - Configurar `electron-updater` (já incluído via `electron-builder`).
 - Checagem de atualizações em background ao iniciar.
@@ -76,7 +109,7 @@ O MVP cobre testes unitários (≥80%). Falta:
 
 ---
 
-## 6. CI/CD pipeline (Média prioridade)
+## 7. CI/CD pipeline (Média prioridade)
 
 - Criar workflow GitHub Actions (`.github/workflows/ci.yml`):
   - Lint (ESLint + Prettier).
@@ -88,7 +121,7 @@ O MVP cobre testes unitários (≥80%). Falta:
 
 ---
 
-## 7. Linting e formatação (Média prioridade)
+## 8. Linting e formatação (Média prioridade)
 
 - Adicionar **ESLint** com plugins `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `@typescript-eslint/eslint-plugin`.
 - Adicionar **Prettier** com `prettier-plugin-tailwindcss`.
@@ -97,7 +130,7 @@ O MVP cobre testes unitários (≥80%). Falta:
 
 ---
 
-## 8. Melhorias de acessibilidade avançada (Média prioridade)
+## 9. Melhorias de acessibilidade avançada (Média prioridade)
 
 - Testar manualmente com **NVDA** (Windows) e **VoiceOver** (macOS).
 - Substituir `@react-aria` por implementação própria ou garantir integração completa dos três pacotes já instalados.
@@ -107,7 +140,7 @@ O MVP cobre testes unitários (≥80%). Falta:
 
 ---
 
-## 9. Painel de monitoramento de recursos (Média prioridade)
+## 10. Painel de monitoramento de recursos (Média prioridade)
 
 O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker são processados. Post-MVP:
 
@@ -117,7 +150,7 @@ O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker 
 
 ---
 
-## 10. Gestão de volumes Docker (Baixa prioridade)
+## 11. Gestão de volumes Docker (Baixa prioridade)
 
 - Aba ou seção dentro de "Images & Networks" para volumes.
 - Listar, inspecionar e remover volumes.
@@ -125,7 +158,7 @@ O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker 
 
 ---
 
-## 11. Notificações de sistema (Baixa prioridade)
+## 12. Notificações de sistema (Baixa prioridade)
 
 - Usar `Notification` da Electron para alertar o usuário quando estiver fora do foco do app:
   - Container morreu inesperadamente.
@@ -134,7 +167,7 @@ O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker 
 
 ---
 
-## 12. Perfis de compose (Baixa prioridade)
+## 13. Perfis de compose (Baixa prioridade)
 
 - Salvar múltiplas configurações de compose nomeadas (perfis).
 - Selecionar e aplicar perfil rapidamente via Command Palette.
@@ -142,7 +175,7 @@ O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker 
 
 ---
 
-## 13. Documentação técnica (Baixa prioridade)
+## 14. Documentação técnica (Baixa prioridade)
 
 - Gerar documentação de API com **TypeDoc**.
 - Documentar cada IPC channel: args esperados, response, erros possíveis.
@@ -169,13 +202,14 @@ O README menciona monitoramento contínuo. Para o MVP, apenas os eventos Docker 
 | Context menu via teclado (Ctrl+Space) | ✅ MVP |
 | Tema alto contraste dark/light | ✅ MVP |
 | Testes unitários ≥80% cobertura | ✅ MVP |
-| Cloud / EKS | ⏳ Post-MVP |
+| Cloud / Kubernetes (agnóstico a provedor) | ⏳ Post-MVP |
+| Desacoplamento Electron / Web (PlatformAdapter) | ⏳ Post-MVP |
 | Persistência electron-store | ⏳ Post-MVP |
 | Internacionalização completa | ⏳ Post-MVP |
 | Testes E2E | ⏳ Post-MVP |
 | Auto-updater | ⏳ Post-MVP |
-| CI/CD pipeline | ⏳ Post-MVP |
-| Linting + Prettier + Husky | ⏳ Post-MVP |
+| CI/CD pipeline | ✅ Concluído |
+| Linting + Prettier + Husky | ✅ Concluído |
 | Volumes Docker | ⏳ Post-MVP |
 | Notificações de sistema | ⏳ Post-MVP |
 | Monitoramento de recursos (CPU/Mem gráficos) | ⏳ Post-MVP |

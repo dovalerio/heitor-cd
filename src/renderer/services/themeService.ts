@@ -2,11 +2,7 @@
  * themeService.ts - Theme application helpers used by useTheme hook
  */
 
-import {
-  applyTheme,
-  darkHighContrastTheme,
-  lightHighContrastTheme,
-} from '@/styles/theme';
+import { applyTheme, darkHighContrastTheme, lightHighContrastTheme } from '@/styles/theme';
 
 export const themeService = {
   /** Applies the dark high-contrast theme to the document root. */
@@ -25,9 +21,7 @@ export const themeService = {
    */
   getPreferred(): 'dark' | 'light' {
     if (typeof window !== 'undefined' && window.matchMedia) {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
     return 'dark';
   },

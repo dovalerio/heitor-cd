@@ -1,5 +1,6 @@
-import { ipcMain, BrowserWindow } from 'electron';
-import Docker from 'dockerode';
+import type { BrowserWindow } from 'electron';
+import { ipcMain } from 'electron';
+import type Docker from 'dockerode';
 import { IPC } from '../../types/ipc';
 import type { DockerEvent } from '../../types/docker';
 
@@ -12,7 +13,7 @@ export function registerDockerEventsHandler(docker: Docker, mainWindow: BrowserW
     if (activeStream) return;
 
     try {
-      const stream = await docker.getEvents({}) as NodeJS.ReadableStream;
+      const stream = (await docker.getEvents({})) as NodeJS.ReadableStream;
       activeStream = stream;
 
       stream.on('data', (chunk: Buffer) => {

@@ -22,13 +22,11 @@ const FOCUSABLE_SELECTOR = [
  * by keyboard inside the given container.
  */
 export const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
-  const candidates = Array.from(
-    container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
-  );
+  const candidates = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
 
   // Filter out elements that are hidden via CSS or have a negative tabIndex
   // that was dynamically set (beyond the selector above).
-  return candidates.filter(el => {
+  return candidates.filter((el) => {
     if (el.tabIndex < 0) return false;
     // offsetParent is null when display:none or visibility:hidden (roughly)
     // Use getComputedStyle as a more reliable check.

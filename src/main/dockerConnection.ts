@@ -7,9 +7,10 @@ import Docker from 'dockerode';
 export async function getDockerConnection(): Promise<Docker> {
   const platform = process.platform;
 
-  const socketPaths: string[] = platform === 'win32'
-    ? ['\\\\.\\pipe\\docker_engine', '/mnt/wsl/shared-docker/docker.sock']
-    : ['/var/run/docker.sock'];
+  const socketPaths: string[] =
+    platform === 'win32'
+      ? ['\\\\.\\pipe\\docker_engine', '/mnt/wsl/shared-docker/docker.sock']
+      : ['/var/run/docker.sock'];
 
   let lastError: Error = new Error('Docker socket not found');
 
@@ -24,6 +25,6 @@ export async function getDockerConnection(): Promise<Docker> {
   }
 
   throw new Error(
-    `Unable to connect to Docker daemon. Tried: ${socketPaths.join(', ')}. Last error: ${lastError.message}`
+    `Unable to connect to Docker daemon. Tried: ${socketPaths.join(', ')}. Last error: ${lastError.message}`,
   );
 }

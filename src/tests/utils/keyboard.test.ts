@@ -131,7 +131,7 @@ describe('parseShortcut', () => {
 describe('matchesShortcut', () => {
   const makeEvent = (
     key: string,
-    opts: { ctrlKey?: boolean; altKey?: boolean; shiftKey?: boolean; metaKey?: boolean } = {}
+    opts: { ctrlKey?: boolean; altKey?: boolean; shiftKey?: boolean; metaKey?: boolean } = {},
   ): KeyboardEvent => {
     return new KeyboardEvent('keydown', {
       key,

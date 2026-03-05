@@ -10,9 +10,7 @@ import type { KeymapFile } from '../../types/keymap';
  * In development the app root is the repo root; in production it's the resources directory.
  */
 function getKeymapsPath(): string {
-  const appRoot = app.isPackaged
-    ? path.join(process.resourcesPath)
-    : path.join(app.getAppPath());
+  const appRoot = app.isPackaged ? path.join(process.resourcesPath) : path.join(app.getAppPath());
   return path.join(appRoot, '.keymaps');
 }
 
@@ -34,7 +32,7 @@ export function registerKeymapsHandlers(): void {
     IPC.KEYMAPS_SAVE,
     async (
       _event,
-      { shortcuts }: { shortcuts: Record<string, string> }
+      { shortcuts }: { shortcuts: Record<string, string> },
     ): Promise<IpcResponse<void>> => {
       try {
         const keymapsPath = getKeymapsPath();
@@ -58,7 +56,7 @@ export function registerKeymapsHandlers(): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // Open the .keymaps file in the default editor

@@ -24,7 +24,7 @@ export const useKeymaps = () => {
 
     keymapsService
       .load()
-      .then(keymapFile => {
+      .then((keymapFile) => {
         if (cancelled) return;
 
         const parsed: Partial<Record<ActionId, ParsedShortcut>> = {};
@@ -34,14 +34,16 @@ export const useKeymaps = () => {
             parsed[actionId as ActionId] = keymapsService.parseShortcut(shortcutStr);
           } catch {
             // Ignore malformed entries so the rest still work
-            console.warn(`[useKeymaps] Could not parse shortcut for "${actionId}": "${shortcutStr}"`);
+            console.warn(
+              `[useKeymaps] Could not parse shortcut for "${actionId}": "${shortcutStr}"`,
+            );
           }
         }
 
         setShortcuts(parsed);
         setIsLoaded(true);
       })
-      .catch(err => {
+      .catch((err) => {
         if (cancelled) return;
         console.error('[useKeymaps] Failed to load keymaps:', err);
         // Still mark as loaded so consumers don't wait forever
@@ -73,7 +75,7 @@ export const useKeymaps = () => {
 export const useKeyboardAction = (
   actionId: ActionId,
   handler: () => void,
-  enabled: boolean = true
+  enabled: boolean = true,
 ): void => {
   // Keep a stable ref to handler so the keydown listener doesn't need to be
   // re-registered whenever the caller's handler changes identity.
@@ -91,7 +93,7 @@ export const useKeyboardAction = (
 
     keymapsService
       .load()
-      .then(keymapFile => {
+      .then((keymapFile) => {
         if (cancelled) return;
         const str = keymapFile.shortcuts[actionId];
         if (str) {
@@ -103,7 +105,7 @@ export const useKeyboardAction = (
         }
         loadedRef.current = true;
       })
-      .catch(err => {
+      .catch((err) => {
         if (cancelled) return;
         console.error('[useKeyboardAction] Failed to load keymaps:', err);
         loadedRef.current = true;

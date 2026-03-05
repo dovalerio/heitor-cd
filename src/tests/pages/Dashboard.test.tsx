@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, within, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Dashboard } from '../../renderer/pages/Dashboard';
@@ -46,7 +46,9 @@ describe('Dashboard', () => {
 
   it('renders "Dashboard" heading', async () => {
     render(<Dashboard dockerService={mockDockerService} />);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
   });
 
@@ -59,7 +61,9 @@ describe('Dashboard', () => {
 
     // Wait for load
     await waitFor(() => {
-      expect(screen.queryByRole('status', { name: 'Carregando containers...' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('status', { name: 'Carregando containers...' }),
+      ).not.toBeInTheDocument();
     });
 
     // Table should appear

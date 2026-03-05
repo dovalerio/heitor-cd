@@ -7,25 +7,26 @@
 :root {
   /* Cores primárias - Alto contraste */
   --color-bg-primary: #000000;
-  --color-fg-primary: #FFFFFF;
-  --color-accent: #00FF00;
+  --color-fg-primary: #ffffff;
+  --color-accent: #00ff00;
   --color-border: #888888;
-  --color-error: #FF0000;
-  --color-warning: #FFFF00;
-  --color-success: #00FF00;
-  --color-info: #00CCFF;
+  --color-error: #ff0000;
+  --color-warning: #ffff00;
+  --color-success: #00ff00;
+  --color-info: #00ccff;
 
   /* Cores secundárias */
-  --color-bg-secondary: #1A1A1A;
-  --color-fg-secondary: #CCCCCC;
+  --color-bg-secondary: #1a1a1a;
+  --color-fg-secondary: #cccccc;
   --color-bg-hover: #333333;
   --color-bg-active: #444444;
   --color-bg-disabled: #222222;
   --color-fg-disabled: #666666;
 
   /* Tipografia */
-  --font-family-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-mono: "Courier New", Courier, monospace;
+  --font-family-default:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'Courier New', Courier, monospace;
   --font-size-base: 16px;
   --font-size-sm: 14px;
   --font-size-lg: 18px;

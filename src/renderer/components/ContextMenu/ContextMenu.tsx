@@ -56,8 +56,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [onClose]);
 
-  const actionItems = items.filter((i): i is ContextMenuItem => !('separator' in i && i.separator));
-
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     const buttons = menuRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
     if (!buttons) return;
@@ -103,10 +101,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
             <button
               ref={currentIndex === 0 ? firstItemRef : undefined}
               role="menuitem"
-              className={[
-                styles.item,
-                menuItem.danger ? styles.itemDanger : '',
-              ]
+              className={[styles.item, menuItem.danger ? styles.itemDanger : '']
                 .filter(Boolean)
                 .join(' ')}
               disabled={menuItem.disabled}

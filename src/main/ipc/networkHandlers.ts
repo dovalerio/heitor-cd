@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import Docker from 'dockerode';
+import type Docker from 'dockerode';
 import { IPC } from '../../types/ipc';
 import type { IpcResponse } from '../../types/ipc';
 import type { NetworkInfo } from '../../types/docker';
@@ -15,7 +15,7 @@ export function registerNetworkHandlers(docker: Docker): void {
         Driver: net.Driver,
         Scope: net.Scope,
         Internal: net.Internal ?? false,
-        Containers: net.Containers as NetworkInfo['Containers'] ?? {},
+        Containers: (net.Containers as NetworkInfo['Containers']) ?? {},
         Created: net.Created,
         IPAM: {
           Driver: net.IPAM?.Driver ?? 'default',
@@ -36,16 +36,16 @@ export function registerNetworkHandlers(docker: Docker): void {
     IPC.NETWORK_CREATE,
     async (
       _event,
-      { name, driver }: { name: string; driver: string }
+      { name, driver }: { name: string; driver: string },
     ): Promise<IpcResponse<{ id: string }>> => {
       try {
         const network = await docker.createNetwork({ Name: name, Driver: driver });
-        const info = await network.inspect() as { Id: string };
+        const info = (await network.inspect()) as { Id: string };
         return { success: true, data: { id: info.Id } };
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // Remove a network
@@ -59,6 +59,6 @@ export function registerNetworkHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 }

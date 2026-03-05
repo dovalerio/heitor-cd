@@ -4,11 +4,7 @@
  */
 
 import { useCallback, useRef, type RefObject } from 'react';
-import {
-  trapFocus,
-  moveFocusToFirst,
-  moveFocusToLast,
-} from '@/utils/focus';
+import { trapFocus, moveFocusToFirst, moveFocusToLast } from '@/utils/focus';
 
 export const useFocusManagement = (containerRef: RefObject<HTMLElement>) => {
   // Holds the cleanup function returned by trapFocus so we can call it later

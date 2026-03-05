@@ -20,9 +20,18 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
 }
 
-.sm { width: 400px; max-width: 100%; }
-.md { width: 560px; max-width: 100%; }
-.lg { width: 800px; max-width: 100%; }
+.sm {
+  width: 400px;
+  max-width: 100%;
+}
+.md {
+  width: 560px;
+  max-width: 100%;
+}
+.lg {
+  width: 800px;
+  max-width: 100%;
+}
 
 .header {
   display: flex;

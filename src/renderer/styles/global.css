@@ -3,7 +3,7 @@
   Fundo preto, alto contraste, acessibilidade primeiro
 */
 
-@import "./variables.css";
+@import './variables.css';
 
 /* Reset e normalização */
 * {
@@ -67,7 +67,12 @@ body.zoom-200 {
 }
 
 /* Tipografia */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
   margin-bottom: var(--spacing-sm);
@@ -155,7 +160,8 @@ table {
   margin-bottom: var(--spacing-lg);
 }
 
-th, td {
+th,
+td {
   border: var(--border-width) solid var(--color-border);
   padding: var(--spacing-md);
   text-align: left;
@@ -195,7 +201,7 @@ tr:nth-child(even) {
 /* Suporte a alto contraste (Windows) */
 @media (prefers-contrast: more) {
   :root {
-    --color-border: #FFFFFF;
+    --color-border: #ffffff;
     --color-bg-hover: #404040;
     --color-bg-active: #505050;
   }
@@ -210,11 +216,11 @@ tr:nth-child(even) {
 @media (prefers-color-scheme: light) {
   /* Mantém alto contraste invertido */
   :root {
-    --color-bg-primary: #FFFFFF;
+    --color-bg-primary: #ffffff;
     --color-fg-primary: #000000;
-    --color-bg-secondary: #E8E8E8;
+    --color-bg-secondary: #e8e8e8;
     --color-border: #777777;
-    --color-bg-hover: #CCCCCC;
-    --color-bg-active: #BBBBBB;
+    --color-bg-hover: #cccccc;
+    --color-bg-active: #bbbbbb;
   }
 }

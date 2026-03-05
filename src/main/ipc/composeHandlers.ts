@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import { spawn } from 'child_process';
 import * as yaml from 'js-yaml';
-import Docker from 'dockerode';
+import type Docker from 'dockerode';
 import { IPC } from '../../types/ipc';
 import type { IpcResponse } from '../../types/ipc';
 import type { ComposeService, StackInfo } from '../../types/docker';
@@ -23,7 +23,9 @@ interface RawComposeFile {
   services?: Record<string, RawComposeService>;
 }
 
-function parseEnvironment(env: Record<string, string> | string[] | undefined): Record<string, string> {
+function parseEnvironment(
+  env: Record<string, string> | string[] | undefined,
+): Record<string, string> {
   if (!env) return {};
   if (Array.isArray(env)) {
     return Object.fromEntries(
@@ -31,7 +33,7 @@ function parseEnvironment(env: Record<string, string> | string[] | undefined): R
         const idx = entry.indexOf('=');
         if (idx === -1) return [entry, ''];
         return [entry.slice(0, idx), entry.slice(idx + 1)];
-      })
+      }),
     );
   }
   return env;
@@ -91,13 +93,13 @@ export function registerComposeHandlers(docker: Docker): void {
         const doc = yaml.load(yamlStr) as RawComposeFile;
         const services = doc?.services ?? {};
         const data: ComposeService[] = Object.entries(services).map(([name, raw]) =>
-          rawServiceToComposeService(name, raw)
+          rawServiceToComposeService(name, raw),
         );
         return { success: true, data };
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // Export a list of ComposeService objects to a YAML string
@@ -118,7 +120,7 @@ export function registerComposeHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // List running compose stacks by inspecting the com.docker.compose.project label
@@ -178,7 +180,7 @@ export function registerComposeHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // Run docker compose down for a given yaml file path
@@ -191,6 +193,6 @@ export function registerComposeHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 }

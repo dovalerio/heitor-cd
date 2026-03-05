@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/Button/Button';
 import { Input } from '@/components/Input/Input';
 import { Modal } from '@/components/Modal/Modal';
-import { Tree, TreeNode } from '@/components/Tree/Tree';
+import type { TreeNode } from '@/components/Tree/Tree';
+import { Tree } from '@/components/Tree/Tree';
 import { announceToScreenReader } from '@/utils/aria';
 import type { ImageInfo, NetworkInfo } from '../../../types/docker';
 import styles from './ImagesNetworks.module.css';
@@ -28,7 +29,11 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [showTree, setShowTree] = useState(false);
-  const [removeTarget, setRemoveTarget] = useState<{ id: string; name: string; type: 'image' | 'network' } | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<{
+    id: string;
+    name: string;
+    type: 'image' | 'network';
+  } | null>(null);
   const [pullName, setPullName] = useState('');
   const [showPull, setShowPull] = useState(false);
   const [showCreateNetwork, setShowCreateNetwork] = useState(false);
@@ -58,7 +63,9 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
     }
   }, [fetchImages, fetchNetworks]);
 
-  useEffect(() => { fetchAll(); }, [fetchAll]);
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const handleRemove = async () => {
     if (!removeTarget) return;
@@ -113,15 +120,17 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
   }));
 
   const filteredImages = images.filter((img) =>
-    img.RepoTags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+    img.RepoTags?.some((t) => t.toLowerCase().includes(search.toLowerCase())),
   );
   const filteredNetworks = networks.filter((net) =>
-    net.Name.toLowerCase().includes(search.toLowerCase())
+    net.Name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <main className={styles.page} aria-label="Imagens e redes">
-      <div aria-live="polite" aria-atomic="true" className="sr-only">{liveMessage}</div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveMessage}
+      </div>
 
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Images & Networks</h1>
@@ -136,7 +145,12 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
           />
           <Button label="Atualizar" variant="ghost" onClick={fetchAll} />
           {tab === 'networks' && (
-            <Button label="Árvore (Ctrl+E)" variant="ghost" pressed={showTree} onClick={() => setShowTree((v) => !v)} />
+            <Button
+              label="Árvore (Ctrl+E)"
+              variant="ghost"
+              pressed={showTree}
+              onClick={() => setShowTree((v) => !v)}
+            />
           )}
         </div>
       </div>
@@ -150,7 +164,10 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
             aria-controls={`panel-${t}`}
             id={`tab-${t}`}
             className={[styles.tab, tab === t ? styles.tabActive : ''].filter(Boolean).join(' ')}
-            onClick={() => { setTab(t); setSearch(''); }}
+            onClick={() => {
+              setTab(t);
+              setSearch('');
+            }}
             type="button"
           >
             {t === 'images' ? 'Imagens' : 'Redes'}
@@ -158,18 +175,32 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
         ))}
       </div>
 
-      {error && <div role="alert" className={styles.error}>{error}</div>}
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
+      )}
 
       {tab === 'images' && (
-        <section id="panel-images" role="tabpanel" aria-labelledby="tab-images" className={styles.panel}>
+        <section
+          id="panel-images"
+          role="tabpanel"
+          aria-labelledby="tab-images"
+          className={styles.panel}
+        >
           <div className={styles.panelActions}>
             <Button label="Pull imagem" onClick={() => setShowPull(true)} data-testid="pull-btn" />
           </div>
           {loading ? (
-            <div role="status" aria-label="Carregando imagens...">Carregando...</div>
+            <div role="status" aria-label="Carregando imagens...">
+              Carregando...
+            </div>
           ) : (
             <div className={styles.tableWrapper}>
-              <table className={styles.table} aria-label={`Imagens — ${filteredImages.length} encontrada(s)`}>
+              <table
+                className={styles.table}
+                aria-label={`Imagens — ${filteredImages.length} encontrada(s)`}
+              >
                 <thead>
                   <tr>
                     <th scope="col">Tag</th>
@@ -181,7 +212,11 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
                 </thead>
                 <tbody>
                   {filteredImages.length === 0 && (
-                    <tr><td colSpan={5} className={styles.empty}>Nenhuma imagem encontrada.</td></tr>
+                    <tr>
+                      <td colSpan={5} className={styles.empty}>
+                        Nenhuma imagem encontrada.
+                      </td>
+                    </tr>
                   )}
                   {filteredImages.map((img) => {
                     const tag = img.RepoTags?.[0] ?? '<none>';
@@ -198,7 +233,9 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
                             label="Remover"
                             variant="danger"
                             size="sm"
-                            onClick={() => setRemoveTarget({ id: img.Id, name: tag, type: 'image' })}
+                            onClick={() =>
+                              setRemoveTarget({ id: img.Id, name: tag, type: 'image' })
+                            }
                             data-testid={`remove-image-${img.Id}`}
                           />
                         </td>
@@ -213,9 +250,18 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
       )}
 
       {tab === 'networks' && (
-        <section id="panel-networks" role="tabpanel" aria-labelledby="tab-networks" className={styles.panel}>
+        <section
+          id="panel-networks"
+          role="tabpanel"
+          aria-labelledby="tab-networks"
+          className={styles.panel}
+        >
           <div className={styles.panelActions}>
-            <Button label="Criar rede" onClick={() => setShowCreateNetwork(true)} data-testid="create-network-btn" />
+            <Button
+              label="Criar rede"
+              onClick={() => setShowCreateNetwork(true)}
+              data-testid="create-network-btn"
+            />
           </div>
           {showTree && (
             <div className={styles.treePanel} aria-label="Árvore de redes">
@@ -223,10 +269,15 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
             </div>
           )}
           {loading ? (
-            <div role="status" aria-label="Carregando redes...">Carregando...</div>
+            <div role="status" aria-label="Carregando redes...">
+              Carregando...
+            </div>
           ) : (
             <div className={styles.tableWrapper}>
-              <table className={styles.table} aria-label={`Redes — ${filteredNetworks.length} encontrada(s)`}>
+              <table
+                className={styles.table}
+                aria-label={`Redes — ${filteredNetworks.length} encontrada(s)`}
+              >
                 <thead>
                   <tr>
                     <th scope="col">Nome</th>
@@ -238,7 +289,11 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
                 </thead>
                 <tbody>
                   {filteredNetworks.length === 0 && (
-                    <tr><td colSpan={5} className={styles.empty}>Nenhuma rede encontrada.</td></tr>
+                    <tr>
+                      <td colSpan={5} className={styles.empty}>
+                        Nenhuma rede encontrada.
+                      </td>
+                    </tr>
                   )}
                   {filteredNetworks.map((net) => (
                     <tr key={net.Id} className={styles.row}>
@@ -252,7 +307,9 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
                           variant="danger"
                           size="sm"
                           disabled={['bridge', 'host', 'none'].includes(net.Name)}
-                          onClick={() => setRemoveTarget({ id: net.Id, name: net.Name, type: 'network' })}
+                          onClick={() =>
+                            setRemoveTarget({ id: net.Id, name: net.Name, type: 'network' })
+                          }
                           data-testid={`remove-net-${net.Id}`}
                         />
                       </td>
@@ -266,31 +323,71 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
       )}
 
       {/* Pull image modal */}
-      <Modal isOpen={showPull} title="Pull de imagem" onClose={() => setShowPull(false)}
+      <Modal
+        isOpen={showPull}
+        title="Pull de imagem"
+        onClose={() => setShowPull(false)}
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setShowPull(false)} />
-            <Button label="Pull" onClick={handlePull} disabled={!pullName.trim()} data-testid="confirm-pull" />
+            <Button
+              label="Pull"
+              onClick={handlePull}
+              disabled={!pullName.trim()}
+              data-testid="confirm-pull"
+            />
           </>
         }
       >
-        <Input id="pull-name" label="Nome da imagem (ex: nginx:latest)" value={pullName} onChange={setPullName} required />
+        <Input
+          id="pull-name"
+          label="Nome da imagem (ex: nginx:latest)"
+          value={pullName}
+          onChange={setPullName}
+          required
+        />
       </Modal>
 
       {/* Create network modal */}
-      <Modal isOpen={showCreateNetwork} title="Criar rede" onClose={() => setShowCreateNetwork(false)}
+      <Modal
+        isOpen={showCreateNetwork}
+        title="Criar rede"
+        onClose={() => setShowCreateNetwork(false)}
         footer={
           <>
-            <Button label="Cancelar" variant="secondary" onClick={() => setShowCreateNetwork(false)} />
-            <Button label="Criar" onClick={handleCreateNetwork} disabled={!newNetworkName.trim()} data-testid="confirm-create-net" />
+            <Button
+              label="Cancelar"
+              variant="secondary"
+              onClick={() => setShowCreateNetwork(false)}
+            />
+            <Button
+              label="Criar"
+              onClick={handleCreateNetwork}
+              disabled={!newNetworkName.trim()}
+              data-testid="confirm-create-net"
+            />
           </>
         }
       >
         <div className={styles.createNetForm}>
-          <Input id="net-name" label="Nome da rede" value={newNetworkName} onChange={setNewNetworkName} required />
+          <Input
+            id="net-name"
+            label="Nome da rede"
+            value={newNetworkName}
+            onChange={setNewNetworkName}
+            required
+          />
           <div>
-            <label className={styles.fieldLabel} htmlFor="net-driver">Driver</label>
-            <select id="net-driver" className={styles.select} value={newNetworkDriver} onChange={(e) => setNewNetworkDriver(e.target.value)} aria-label="Driver da rede">
+            <label className={styles.fieldLabel} htmlFor="net-driver">
+              Driver
+            </label>
+            <select
+              id="net-driver"
+              className={styles.select}
+              value={newNetworkDriver}
+              onChange={(e) => setNewNetworkDriver(e.target.value)}
+              aria-label="Driver da rede"
+            >
               <option value="bridge">bridge</option>
               <option value="host">host</option>
               <option value="overlay">overlay</option>
@@ -301,15 +398,25 @@ export const ImagesNetworks: React.FC<ImagesNetworksProps> = ({ dockerService })
       </Modal>
 
       {/* Remove confirmation */}
-      <Modal isOpen={!!removeTarget} title="Confirmar remoção" onClose={() => setRemoveTarget(null)}
+      <Modal
+        isOpen={!!removeTarget}
+        title="Confirmar remoção"
+        onClose={() => setRemoveTarget(null)}
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setRemoveTarget(null)} />
-            <Button label="Remover" variant="danger" onClick={handleRemove} data-testid="confirm-remove" />
+            <Button
+              label="Remover"
+              variant="danger"
+              onClick={handleRemove}
+              data-testid="confirm-remove"
+            />
           </>
         }
       >
-        <p>Remover <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.</p>
+        <p>
+          Remover <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.
+        </p>
       </Modal>
     </main>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Logs } from '../../renderer/pages/Logs';
@@ -86,7 +86,11 @@ describe('Logs', () => {
     await user.selectOptions(select, 'c1');
 
     await waitFor(() => {
-      expect(mockDockerService.getContainerLogs).toHaveBeenCalledWith('c1', expect.any(Number), expect.any(Boolean));
+      expect(mockDockerService.getContainerLogs).toHaveBeenCalledWith(
+        'c1',
+        expect.any(Number),
+        expect.any(Boolean),
+      );
     });
   });
 
@@ -149,14 +153,16 @@ describe('Logs', () => {
     await user.click(copyBtn);
 
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      expect.stringContaining('Error stderr')
+      expect.stringContaining('Error stderr'),
     );
   });
 
   it('shows loading state while fetching logs', async () => {
     let resolveGetLogs: (value: LogLine[]) => void;
     mockDockerService.getContainerLogs.mockReturnValue(
-      new Promise<LogLine[]>((resolve) => { resolveGetLogs = resolve; })
+      new Promise<LogLine[]>((resolve) => {
+        resolveGetLogs = resolve;
+      }),
     );
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
@@ -172,7 +178,9 @@ describe('Logs', () => {
     expect(screen.getByRole('status', { name: 'Carregando logs...' })).toBeInTheDocument();
 
     // Resolve to unblock
-    act(() => { resolveGetLogs!([]); });
+    act(() => {
+      resolveGetLogs!([]);
+    });
   });
 
   it('shows empty state when no container is selected', async () => {
@@ -208,11 +216,15 @@ describe('Logs', () => {
         dockerService={mockDockerService}
         initialContainerId="c1"
         initialContainerName="test"
-      />
+      />,
     );
 
     await waitFor(() => {
-      expect(mockDockerService.getContainerLogs).toHaveBeenCalledWith('c1', expect.any(Number), expect.any(Boolean));
+      expect(mockDockerService.getContainerLogs).toHaveBeenCalledWith(
+        'c1',
+        expect.any(Number),
+        expect.any(Boolean),
+      );
     });
   });
 

@@ -5,7 +5,9 @@ export const Cloud: React.FC = () => {
   return (
     <main className={styles.page} aria-label="Cloud — Gerenciamento EKS">
       <div className={styles.content}>
-        <div className={styles.icon} aria-hidden="true">☁️</div>
+        <div className={styles.icon} aria-hidden="true">
+          ☁️
+        </div>
         <h1 className={styles.title}>Cloud / EKS</h1>
         <p className={styles.description}>
           O gerenciamento de clusters AWS EKS está em desenvolvimento.

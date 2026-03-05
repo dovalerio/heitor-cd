@@ -4,10 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Theme } from '@/styles/theme';
-import {
-  darkHighContrastTheme,
-  lightHighContrastTheme,
-} from '@/styles/theme';
+import { darkHighContrastTheme, lightHighContrastTheme } from '@/styles/theme';
 import { themeService } from '@/services/themeService';
 
 type ThemePreference = 'dark' | 'light';
@@ -36,7 +33,7 @@ export const useTheme = () => {
   }, [preference]);
 
   const toggleTheme = useCallback(() => {
-    setPreference(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setPreference((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);
 
   return {

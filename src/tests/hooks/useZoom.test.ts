@@ -8,15 +8,15 @@ const ZOOM_LEVELS = [80, 90, 100, 110, 125, 150, 175, 200];
 describe('useZoom', () => {
   beforeEach(() => {
     // Clean up body classes before each test
-    ZOOM_LEVELS.forEach(level => document.body.classList.remove(`zoom-${level}`));
+    ZOOM_LEVELS.forEach((level) => document.body.classList.remove(`zoom-${level}`));
     localStorage.clear();
     // Clean up any live region elements
-    document.querySelectorAll('[aria-live]').forEach(el => el.remove());
+    document.querySelectorAll('[aria-live]').forEach((el) => el.remove());
   });
 
   afterEach(() => {
-    ZOOM_LEVELS.forEach(level => document.body.classList.remove(`zoom-${level}`));
-    document.querySelectorAll('[aria-live]').forEach(el => el.remove());
+    ZOOM_LEVELS.forEach((level) => document.body.classList.remove(`zoom-${level}`));
+    document.querySelectorAll('[aria-live]').forEach((el) => el.remove());
   });
 
   it('initializes with zoomLevel 100 when no localStorage value is set', () => {
@@ -157,7 +157,7 @@ describe('useZoom', () => {
     const { result } = renderHook(() => useZoom());
 
     // Should only have zoom-150
-    ZOOM_LEVELS.filter(l => l !== 150).forEach(level => {
+    ZOOM_LEVELS.filter((l) => l !== 150).forEach((level) => {
       expect(document.body.classList.contains(`zoom-${level}`)).toBe(false);
     });
     expect(document.body.classList.contains('zoom-150')).toBe(true);
@@ -284,9 +284,7 @@ describe('useZoomKeyboardShortcuts', () => {
     const onDecrease = vi.fn();
     const onReset = vi.fn();
 
-    const { unmount } = renderHook(() =>
-      useZoomKeyboardShortcuts(onIncrease, onDecrease, onReset)
-    );
+    const { unmount } = renderHook(() => useZoomKeyboardShortcuts(onIncrease, onDecrease, onReset));
 
     unmount();
 

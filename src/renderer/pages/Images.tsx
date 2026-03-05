@@ -37,7 +37,9 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
     }
   }, [dockerService]);
 
-  useEffect(() => { fetchImages(); }, [fetchImages]);
+  useEffect(() => {
+    fetchImages();
+  }, [fetchImages]);
 
   const handleRemove = async () => {
     if (!removeTarget) return;
@@ -67,12 +69,14 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
   };
 
   const filteredImages = images.filter((img) =>
-    img.RepoTags?.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+    img.RepoTags?.some((t) => t.toLowerCase().includes(search.toLowerCase())),
   );
 
   return (
     <main className={styles.page} aria-label="Imagens Docker">
-      <div aria-live="polite" aria-atomic="true" className="sr-only">{liveMessage}</div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveMessage}
+      </div>
 
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Imagens</h1>
@@ -90,13 +94,22 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
         </div>
       </div>
 
-      {error && <div role="alert" className={styles.error}>{error}</div>}
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
+      )}
 
       {loading ? (
-        <div role="status" aria-label="Carregando imagens...">Carregando...</div>
+        <div role="status" aria-label="Carregando imagens...">
+          Carregando...
+        </div>
       ) : (
         <div className={styles.tableWrapper}>
-          <table className={styles.table} aria-label={`Imagens — ${filteredImages.length} encontrada(s)`}>
+          <table
+            className={styles.table}
+            aria-label={`Imagens — ${filteredImages.length} encontrada(s)`}
+          >
             <thead>
               <tr>
                 <th scope="col">Tag</th>
@@ -108,7 +121,11 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
             </thead>
             <tbody>
               {filteredImages.length === 0 && (
-                <tr><td colSpan={5} className={styles.empty}>Nenhuma imagem encontrada.</td></tr>
+                <tr>
+                  <td colSpan={5} className={styles.empty}>
+                    Nenhuma imagem encontrada.
+                  </td>
+                </tr>
               )}
               {filteredImages.map((img) => {
                 const tag = img.RepoTags?.[0] ?? '<none>';
@@ -145,11 +162,22 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setShowPull(false)} />
-            <Button label="Pull" onClick={handlePull} disabled={!pullName.trim()} data-testid="confirm-pull" />
+            <Button
+              label="Pull"
+              onClick={handlePull}
+              disabled={!pullName.trim()}
+              data-testid="confirm-pull"
+            />
           </>
         }
       >
-        <Input id="pull-name" label="Nome da imagem (ex: nginx:latest)" value={pullName} onChange={setPullName} required />
+        <Input
+          id="pull-name"
+          label="Nome da imagem (ex: nginx:latest)"
+          value={pullName}
+          onChange={setPullName}
+          required
+        />
       </Modal>
 
       {/* Remove confirmation */}
@@ -160,11 +188,18 @@ export const Images: React.FC<ImagesProps> = ({ dockerService }) => {
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setRemoveTarget(null)} />
-            <Button label="Remover" variant="danger" onClick={handleRemove} data-testid="confirm-remove" />
+            <Button
+              label="Remover"
+              variant="danger"
+              onClick={handleRemove}
+              data-testid="confirm-remove"
+            />
           </>
         }
       >
-        <p>Remover <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.</p>
+        <p>
+          Remover <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.
+        </p>
       </Modal>
     </main>
   );

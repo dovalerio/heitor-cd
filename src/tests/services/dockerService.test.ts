@@ -79,7 +79,10 @@ describe('dockerService.removeContainer', () => {
 
     await dockerService.removeContainer('container-id-3', true);
 
-    expect(mockInvoke).toHaveBeenCalledWith('container:remove', { id: 'container-id-3', force: true });
+    expect(mockInvoke).toHaveBeenCalledWith('container:remove', {
+      id: 'container-id-3',
+      force: true,
+    });
   });
 
   it('invokes CONTAINER_REMOVE with force: false by default', async () => {
@@ -87,13 +90,18 @@ describe('dockerService.removeContainer', () => {
 
     await dockerService.removeContainer('container-id-4');
 
-    expect(mockInvoke).toHaveBeenCalledWith('container:remove', { id: 'container-id-4', force: false });
+    expect(mockInvoke).toHaveBeenCalledWith('container:remove', {
+      id: 'container-id-4',
+      force: false,
+    });
   });
 
   it('throws when remove fails', async () => {
     mockInvoke.mockResolvedValueOnce({ success: false, error: 'Cannot remove running container' });
 
-    await expect(dockerService.removeContainer('id')).rejects.toThrow('Cannot remove running container');
+    await expect(dockerService.removeContainer('id')).rejects.toThrow(
+      'Cannot remove running container',
+    );
   });
 });
 
@@ -163,7 +171,9 @@ describe('dockerService.pullImage', () => {
   it('throws when pull fails', async () => {
     mockInvoke.mockResolvedValueOnce({ success: false, error: 'Image not found in registry' });
 
-    await expect(dockerService.pullImage('nonexistent')).rejects.toThrow('Image not found in registry');
+    await expect(dockerService.pullImage('nonexistent')).rejects.toThrow(
+      'Image not found in registry',
+    );
   });
 });
 
@@ -210,7 +220,9 @@ describe('dockerService.createNetwork', () => {
   it('throws when network creation fails', async () => {
     mockInvoke.mockResolvedValueOnce({ success: false, error: 'Network name already in use' });
 
-    await expect(dockerService.createNetwork('existing')).rejects.toThrow('Network name already in use');
+    await expect(dockerService.createNetwork('existing')).rejects.toThrow(
+      'Network name already in use',
+    );
   });
 });
 
@@ -226,7 +238,9 @@ describe('dockerService.removeNetwork', () => {
   it('throws when network removal fails', async () => {
     mockInvoke.mockResolvedValueOnce({ success: false, error: 'Network has active endpoints' });
 
-    await expect(dockerService.removeNetwork('net-id')).rejects.toThrow('Network has active endpoints');
+    await expect(dockerService.removeNetwork('net-id')).rejects.toThrow(
+      'Network has active endpoints',
+    );
   });
 });
 

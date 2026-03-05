@@ -26,10 +26,7 @@ declare global {
 // Hook
 // ---------------------------------------------------------------------------
 
-export const useDockerEvents = (
-  onEvent: (event: DockerEvent) => void,
-  enabled: boolean = true
-) => {
+export const useDockerEvents = (onEvent: (event: DockerEvent) => void, enabled: boolean = true) => {
   const [isMonitoring, setIsMonitoring] = useState(false);
 
   // Keep stable refs so effects don't re-run on every render

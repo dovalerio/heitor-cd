@@ -36,7 +36,7 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
   const [exportYaml, setExportYaml] = useState('');
   const [importYaml, setImportYaml] = useState('');
   const [showImport, setShowImport] = useState(false);
-  const [liveMessage, setLiveMessage] = useState('');
+  const [liveMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const addService = useCallback(() => {
@@ -52,11 +52,14 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
     announceToScreenReader(`Serviço ${updated.name || 'sem nome'} salvo.`, false);
   }, []);
 
-  const removeService = useCallback((id: string) => {
-    const s = services.find((svc) => svc.id === id);
-    setServices((prev) => prev.filter((svc) => svc.id !== id));
-    if (s) announceToScreenReader(`Serviço ${s.name} removido.`, false);
-  }, [services]);
+  const removeService = useCallback(
+    (id: string) => {
+      const s = services.find((svc) => svc.id === id);
+      setServices((prev) => prev.filter((svc) => svc.id !== id));
+      if (s) announceToScreenReader(`Serviço ${s.name} removido.`, false);
+    },
+    [services],
+  );
 
   const enterMoveMode = useCallback(() => {
     setMoveMode(true);
@@ -126,18 +129,31 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
     if (!moveMode) return;
     if (e.key === 'Escape') exitMoveMode();
     if (e.key === 'Enter') confirmMove();
-    if (e.altKey && e.key === 'ArrowUp') { e.preventDefault(); handleMoveUp(); }
-    if (e.altKey && e.key === 'ArrowDown') { e.preventDefault(); handleMoveDown(); }
+    if (e.altKey && e.key === 'ArrowUp') {
+      e.preventDefault();
+      handleMoveUp();
+    }
+    if (e.altKey && e.key === 'ArrowDown') {
+      e.preventDefault();
+      handleMoveDown();
+    }
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <main className={styles.page} aria-label="Composer - Visual Builder" onKeyDown={handleKeyDown}>
-      <div aria-live="polite" aria-atomic="true" className="sr-only">{liveMessage}</div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveMessage}
+      </div>
 
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Composer</h1>
         <div className={styles.toolbarActions}>
-          <Button label="Adicionar serviço (Ctrl+Shift+A)" onClick={addService} data-testid="add-service" />
+          <Button
+            label="Adicionar serviço (Ctrl+Shift+A)"
+            onClick={addService}
+            data-testid="add-service"
+          />
           {!moveMode ? (
             <Button
               label="Modo mover (Ctrl+Shift+M)"
@@ -148,26 +164,45 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
             />
           ) : (
             <>
-              <Button label="↑ (Alt+↑)" variant="ghost" onClick={handleMoveUp} disabled={!movingId} />
-              <Button label="↓ (Alt+↓)" variant="ghost" onClick={handleMoveDown} disabled={!movingId} />
+              <Button
+                label="↑ (Alt+↑)"
+                variant="ghost"
+                onClick={handleMoveUp}
+                disabled={!movingId}
+              />
+              <Button
+                label="↓ (Alt+↓)"
+                variant="ghost"
+                onClick={handleMoveDown}
+                disabled={!movingId}
+              />
               <Button label="Confirmar (Enter)" variant="primary" onClick={confirmMove} />
               <Button label="Cancelar (Esc)" variant="secondary" onClick={exitMoveMode} />
             </>
           )}
           <Button label="Importar YAML" variant="ghost" onClick={() => setShowImport(true)} />
-          <Button label="Exportar YAML" variant="ghost" onClick={handleExport} disabled={services.length === 0} />
+          <Button
+            label="Exportar YAML"
+            variant="ghost"
+            onClick={handleExport}
+            disabled={services.length === 0}
+          />
         </div>
       </div>
 
       {error && (
-        <div role="alert" className={styles.error}>{error}
+        <div role="alert" className={styles.error}>
+          {error}
           <Button label="Fechar" variant="ghost" size="sm" onClick={() => setError(null)} />
         </div>
       )}
 
       {moveMode && (
         <div role="status" className={styles.moveBanner}>
-          Modo mover ativo. {movingId ? 'Use Alt+↑/↓ para mover, Enter para confirmar.' : 'Clique em um serviço para selecionar.'}
+          Modo mover ativo.{' '}
+          {movingId
+            ? 'Use Alt+↑/↓ para mover, Enter para confirmar.'
+            : 'Clique em um serviço para selecionar.'}
         </div>
       )}
 
@@ -179,7 +214,9 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
       ) : (
         <div className={styles.serviceList} role="list" aria-label="Serviços do compose">
           {services.map((svc, idx) => (
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
             <article
+              tabIndex={moveMode ? 0 : -1}
               key={svc.id}
               role="listitem"
               aria-label={`Serviço ${svc.name || 'sem nome'}, posição ${idx + 1} de ${services.length}`}
@@ -189,7 +226,6 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
               ]
                 .filter(Boolean)
                 .join(' ')}
-              tabIndex={moveMode ? 0 : -1}
               onClick={() => {
                 if (moveMode) {
                   setMovingId(svc.id);
@@ -204,7 +240,9 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
               }}
             >
               <div className={styles.serviceHeader}>
-                <span className={styles.serviceIndex} aria-hidden="true">{idx + 1}</span>
+                <span className={styles.serviceIndex} aria-hidden="true">
+                  {idx + 1}
+                </span>
                 <div>
                   <h2 className={styles.serviceName}>{svc.name || <em>sem nome</em>}</h2>
                   <p className={styles.serviceImage}>{svc.image || <em>sem imagem</em>}</p>
@@ -256,8 +294,15 @@ export const Composer: React.FC<ComposerProps> = ({ dockerService }) => {
       )}
 
       {/* Export modal */}
-      <Modal isOpen={showExport} title="Exportar docker-compose.yaml" onClose={() => setShowExport(false)} size="lg">
-        <pre className={styles.yamlOutput} aria-label="YAML gerado">{exportYaml}</pre>
+      <Modal
+        isOpen={showExport}
+        title="Exportar docker-compose.yaml"
+        onClose={() => setShowExport(false)}
+        size="lg"
+      >
+        <pre className={styles.yamlOutput} aria-label="YAML gerado">
+          {exportYaml}
+        </pre>
         <Button
           label="Copiar para clipboard"
           onClick={() => {
@@ -306,7 +351,13 @@ const ServiceEditModal: React.FC<ServiceEditModalProps> = ({ service, onSave, on
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const setList = (field: 'ports' | 'volumes' | 'networks' | 'depends_on', raw: string) =>
-    set(field, raw.split('\n').map((s) => s.trim()).filter(Boolean));
+    set(
+      field,
+      raw
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    );
 
   const setEnv = (raw: string) => {
     const env: Record<string, string> = {};
@@ -335,11 +386,30 @@ const ServiceEditModal: React.FC<ServiceEditModalProps> = ({ service, onSave, on
       }
     >
       <div className={styles.editGrid}>
-        <Input id="svc-name" label="Nome do serviço *" value={form.name} onChange={(v) => set('name', v)} required />
-        <Input id="svc-image" label="Imagem *" value={form.image} onChange={(v) => set('image', v)} required />
-        <Input id="svc-command" label="Command" value={form.command ?? ''} onChange={(v) => set('command', v)} />
+        <Input
+          id="svc-name"
+          label="Nome do serviço *"
+          value={form.name}
+          onChange={(v) => set('name', v)}
+          required
+        />
+        <Input
+          id="svc-image"
+          label="Imagem *"
+          value={form.image}
+          onChange={(v) => set('image', v)}
+          required
+        />
+        <Input
+          id="svc-command"
+          label="Command"
+          value={form.command ?? ''}
+          onChange={(v) => set('command', v)}
+        />
         <div>
-          <label className={styles.fieldLabel} htmlFor="svc-restart">Restart policy</label>
+          <label className={styles.fieldLabel} htmlFor="svc-restart">
+            Restart policy
+          </label>
           <select
             id="svc-restart"
             className={styles.select}
@@ -354,20 +424,58 @@ const ServiceEditModal: React.FC<ServiceEditModalProps> = ({ service, onSave, on
           </select>
         </div>
         <div className={styles.textareaField}>
-          <label className={styles.fieldLabel} htmlFor="svc-ports">Portas (uma por linha, ex: 8080:80)</label>
-          <textarea id="svc-ports" className={styles.textarea} rows={3} value={form.ports.join('\n')} onChange={(e) => setList('ports', e.target.value)} aria-label="Portas" />
+          <label className={styles.fieldLabel} htmlFor="svc-ports">
+            Portas (uma por linha, ex: 8080:80)
+          </label>
+          <textarea
+            id="svc-ports"
+            className={styles.textarea}
+            rows={3}
+            value={form.ports.join('\n')}
+            onChange={(e) => setList('ports', e.target.value)}
+            aria-label="Portas"
+          />
         </div>
         <div className={styles.textareaField}>
-          <label className={styles.fieldLabel} htmlFor="svc-env">Variáveis de ambiente (KEY=value)</label>
-          <textarea id="svc-env" className={styles.textarea} rows={4} value={Object.entries(form.environment).map(([k, v]) => `${k}=${v}`).join('\n')} onChange={(e) => setEnv(e.target.value)} aria-label="Variáveis de ambiente" />
+          <label className={styles.fieldLabel} htmlFor="svc-env">
+            Variáveis de ambiente (KEY=value)
+          </label>
+          <textarea
+            id="svc-env"
+            className={styles.textarea}
+            rows={4}
+            value={Object.entries(form.environment)
+              .map(([k, v]) => `${k}=${v}`)
+              .join('\n')}
+            onChange={(e) => setEnv(e.target.value)}
+            aria-label="Variáveis de ambiente"
+          />
         </div>
         <div className={styles.textareaField}>
-          <label className={styles.fieldLabel} htmlFor="svc-volumes">Volumes (um por linha)</label>
-          <textarea id="svc-volumes" className={styles.textarea} rows={3} value={form.volumes.join('\n')} onChange={(e) => setList('volumes', e.target.value)} aria-label="Volumes" />
+          <label className={styles.fieldLabel} htmlFor="svc-volumes">
+            Volumes (um por linha)
+          </label>
+          <textarea
+            id="svc-volumes"
+            className={styles.textarea}
+            rows={3}
+            value={form.volumes.join('\n')}
+            onChange={(e) => setList('volumes', e.target.value)}
+            aria-label="Volumes"
+          />
         </div>
         <div className={styles.textareaField}>
-          <label className={styles.fieldLabel} htmlFor="svc-deps">Depends on (um por linha)</label>
-          <textarea id="svc-deps" className={styles.textarea} rows={2} value={form.depends_on.join('\n')} onChange={(e) => setList('depends_on', e.target.value)} aria-label="Dependências" />
+          <label className={styles.fieldLabel} htmlFor="svc-deps">
+            Depends on (um por linha)
+          </label>
+          <textarea
+            id="svc-deps"
+            className={styles.textarea}
+            rows={2}
+            value={form.depends_on.join('\n')}
+            onChange={(e) => setList('depends_on', e.target.value)}
+            aria-label="Dependências"
+          />
         </div>
       </div>
     </Modal>

@@ -108,8 +108,14 @@
   width: 100%;
 }
 
-.footerBtn:hover { background-color: var(--color-bg-hover); color: var(--color-fg-primary); }
-.footerBtn:focus-visible { outline: var(--border-width-focus) solid var(--color-accent); outline-offset: 2px; }
+.footerBtn:hover {
+  background-color: var(--color-bg-hover);
+  color: var(--color-fg-primary);
+}
+.footerBtn:focus-visible {
+  outline: var(--border-width-focus) solid var(--color-accent);
+  outline-offset: 2px;
+}
 
 .monitoringOff {
   color: var(--color-warning);

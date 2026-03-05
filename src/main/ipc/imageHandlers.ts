@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import Docker from 'dockerode';
+import type Docker from 'dockerode';
 import { IPC } from '../../types/ipc';
 import type { IpcResponse } from '../../types/ipc';
 import type { ImageInfo } from '../../types/docker';
@@ -35,7 +35,7 @@ export function registerImageHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 
   // Pull an image (stream progress, resolves when complete)
@@ -59,6 +59,6 @@ export function registerImageHandlers(docker: Docker): void {
       } catch (err) {
         return { success: false, error: (err as Error).message };
       }
-    }
+    },
   );
 }

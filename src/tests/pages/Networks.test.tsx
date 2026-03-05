@@ -63,7 +63,10 @@ describe('Networks', () => {
     await user.click(screen.getByTestId('confirm-create-net'));
 
     await waitFor(() => {
-      expect(mockDockerService.createNetwork).toHaveBeenCalledWith('my-new-net', expect.any(String));
+      expect(mockDockerService.createNetwork).toHaveBeenCalledWith(
+        'my-new-net',
+        expect.any(String),
+      );
     });
   });
 
@@ -80,7 +83,9 @@ describe('Networks', () => {
 
   it('remove network button opens confirm modal', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
-    mockDockerService.listNetworks.mockResolvedValue([makeNetwork({ Id: 'net1', Name: 'custom-net' })]);
+    mockDockerService.listNetworks.mockResolvedValue([
+      makeNetwork({ Id: 'net1', Name: 'custom-net' }),
+    ]);
     render(<Networks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.getByText('custom-net')).toBeInTheDocument());
@@ -91,7 +96,9 @@ describe('Networks', () => {
 
   it('confirm remove network calls removeNetwork', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
-    mockDockerService.listNetworks.mockResolvedValue([makeNetwork({ Id: 'net1', Name: 'custom-net' })]);
+    mockDockerService.listNetworks.mockResolvedValue([
+      makeNetwork({ Id: 'net1', Name: 'custom-net' }),
+    ]);
     render(<Networks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.getByText('custom-net')).toBeInTheDocument());

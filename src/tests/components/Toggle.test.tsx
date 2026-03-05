@@ -83,8 +83,7 @@ describe('Toggle', () => {
     expect(handleChange).not.toHaveBeenCalled();
   });
 
-  it('does NOT call onChange when disabled and Space pressed', async () => {
-    const user = userEvent.setup();
+  it('does NOT call onChange when disabled and Space pressed', () => {
     const handleChange = vi.fn();
     render(<Toggle {...defaultProps} disabled onChange={handleChange} />);
     const toggle = screen.getByRole('switch');

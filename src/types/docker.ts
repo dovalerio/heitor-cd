@@ -64,13 +64,7 @@ export interface NetworkContainer {
   IPv6Address: string;
 }
 
-export type DockerEventType =
-  | 'container'
-  | 'image'
-  | 'network'
-  | 'volume'
-  | 'plugin'
-  | 'daemon';
+export type DockerEventType = 'container' | 'image' | 'network' | 'volume' | 'plugin' | 'daemon';
 
 export type DockerEventAction =
   | 'create'

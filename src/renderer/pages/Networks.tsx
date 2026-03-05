@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/Button/Button';
 import { Input } from '@/components/Input/Input';
 import { Modal } from '@/components/Modal/Modal';
-import { Tree, TreeNode } from '@/components/Tree/Tree';
+import type { TreeNode } from '@/components/Tree/Tree';
+import { Tree } from '@/components/Tree/Tree';
 import { announceToScreenReader } from '@/utils/aria';
 import type { NetworkInfo } from '../../../types/docker';
 import styles from './Networks.module.css';
@@ -40,7 +41,9 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
     }
   }, [dockerService]);
 
-  useEffect(() => { fetchNetworks(); }, [fetchNetworks]);
+  useEffect(() => {
+    fetchNetworks();
+  }, [fetchNetworks]);
 
   const handleRemove = async () => {
     if (!removeTarget) return;
@@ -79,12 +82,14 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
   }));
 
   const filteredNetworks = networks.filter((net) =>
-    net.Name.toLowerCase().includes(search.toLowerCase())
+    net.Name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <main className={styles.page} aria-label="Redes Docker">
-      <div aria-live="polite" aria-atomic="true" className="sr-only">{liveMessage}</div>
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveMessage}
+      </div>
 
       <div className={styles.toolbar}>
         <h1 className={styles.title}>Redes</h1>
@@ -97,13 +102,26 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
             placeholder="Nome..."
             type="search"
           />
-          <Button label="Criar rede" onClick={() => setShowCreateNetwork(true)} data-testid="create-network-btn" />
-          <Button label="Árvore (Ctrl+E)" variant="ghost" pressed={showTree} onClick={() => setShowTree((v) => !v)} />
+          <Button
+            label="Criar rede"
+            onClick={() => setShowCreateNetwork(true)}
+            data-testid="create-network-btn"
+          />
+          <Button
+            label="Árvore (Ctrl+E)"
+            variant="ghost"
+            pressed={showTree}
+            onClick={() => setShowTree((v) => !v)}
+          />
           <Button label="Atualizar" variant="ghost" onClick={fetchNetworks} />
         </div>
       </div>
 
-      {error && <div role="alert" className={styles.error}>{error}</div>}
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
+      )}
 
       {showTree && (
         <div className={styles.treePanel} aria-label="Árvore de redes">
@@ -112,10 +130,15 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
       )}
 
       {loading ? (
-        <div role="status" aria-label="Carregando redes...">Carregando...</div>
+        <div role="status" aria-label="Carregando redes...">
+          Carregando...
+        </div>
       ) : (
         <div className={styles.tableWrapper}>
-          <table className={styles.table} aria-label={`Redes — ${filteredNetworks.length} encontrada(s)`}>
+          <table
+            className={styles.table}
+            aria-label={`Redes — ${filteredNetworks.length} encontrada(s)`}
+          >
             <thead>
               <tr>
                 <th scope="col">Nome</th>
@@ -127,7 +150,11 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
             </thead>
             <tbody>
               {filteredNetworks.length === 0 && (
-                <tr><td colSpan={5} className={styles.empty}>Nenhuma rede encontrada.</td></tr>
+                <tr>
+                  <td colSpan={5} className={styles.empty}>
+                    Nenhuma rede encontrada.
+                  </td>
+                </tr>
               )}
               {filteredNetworks.map((net) => (
                 <tr key={net.Id} className={styles.row}>
@@ -159,15 +186,32 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
         onClose={() => setShowCreateNetwork(false)}
         footer={
           <>
-            <Button label="Cancelar" variant="secondary" onClick={() => setShowCreateNetwork(false)} />
-            <Button label="Criar" onClick={handleCreateNetwork} disabled={!newNetworkName.trim()} data-testid="confirm-create-net" />
+            <Button
+              label="Cancelar"
+              variant="secondary"
+              onClick={() => setShowCreateNetwork(false)}
+            />
+            <Button
+              label="Criar"
+              onClick={handleCreateNetwork}
+              disabled={!newNetworkName.trim()}
+              data-testid="confirm-create-net"
+            />
           </>
         }
       >
         <div className={styles.createNetForm}>
-          <Input id="net-name" label="Nome da rede" value={newNetworkName} onChange={setNewNetworkName} required />
+          <Input
+            id="net-name"
+            label="Nome da rede"
+            value={newNetworkName}
+            onChange={setNewNetworkName}
+            required
+          />
           <div>
-            <label className={styles.fieldLabel} htmlFor="net-driver">Driver</label>
+            <label className={styles.fieldLabel} htmlFor="net-driver">
+              Driver
+            </label>
             <select
               id="net-driver"
               className={styles.select}
@@ -192,11 +236,18 @@ export const Networks: React.FC<NetworksProps> = ({ dockerService }) => {
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setRemoveTarget(null)} />
-            <Button label="Remover" variant="danger" onClick={handleRemove} data-testid="confirm-remove" />
+            <Button
+              label="Remover"
+              variant="danger"
+              onClick={handleRemove}
+              data-testid="confirm-remove"
+            />
           </>
         }
       >
-        <p>Remover rede <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.</p>
+        <p>
+          Remover rede <strong>{removeTarget?.name}</strong>? Esta ação não pode ser desfeita.
+        </p>
       </Modal>
     </main>
   );

@@ -4,7 +4,8 @@ import { Button } from '@/components/Button/Button';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { Modal } from '@/components/Modal/Modal';
 import { ContextMenu } from '@/components/ContextMenu/ContextMenu';
-import { Tree, TreeNode } from '@/components/Tree/Tree';
+import type { TreeNode } from '@/components/Tree/Tree';
+import { Tree } from '@/components/Tree/Tree';
 import { Input } from '@/components/Input/Input';
 import { announceToScreenReader } from '@/utils/aria';
 import type { ContainerInfo, DockerEvent } from '../../../types/docker';
@@ -42,7 +43,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [showTree, setShowTree] = useState(false);
   const [liveMessage, setLiveMessage] = useState('');
 
-  const searchRef = useRef<HTMLInputElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
 
   const fetchContainers = useCallback(async () => {
@@ -77,7 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const filtered = containers.filter(
     (c) =>
       c.Names.some((n) => n.toLowerCase().includes(search.toLowerCase())) ||
-      c.Image.toLowerCase().includes(search.toLowerCase())
+      c.Image.toLowerCase().includes(search.toLowerCase()),
   );
 
   const toggleSelect = (id: string) => {
@@ -140,7 +140,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
       { id: `${c.Id}-image`, label: `Image: ${c.Image}` },
       { id: `${c.Id}-status`, label: `Status: ${c.State}` },
       ...(c.Ports?.length
-        ? [{ id: `${c.Id}-ports`, label: `Ports: ${c.Ports.map((p) => p.PublicPort ?? p.PrivatePort).join(', ')}` }]
+        ? [
+            {
+              id: `${c.Id}-ports`,
+              label: `Ports: ${c.Ports.map((p) => p.PublicPort ?? p.PrivatePort).join(', ')}`,
+            },
+          ]
         : []),
     ],
   }));
@@ -220,7 +225,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           >
             <thead>
               <tr>
-                <th scope="col" className={styles.thCheck}>Sel.</th>
+                <th scope="col" className={styles.thCheck}>
+                  Sel.
+                </th>
                 <th scope="col">Nome</th>
                 <th scope="col">Imagem</th>
                 <th scope="col">Status</th>
@@ -272,7 +279,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <td className={styles.tdPorts}>
                       {c.Ports?.map((p) => (
                         <span key={`${p.PublicPort}-${p.PrivatePort}`} className={styles.port}>
-                          {p.PublicPort ? `${p.PublicPort}:` : ''}{p.PrivatePort}/{p.Type}
+                          {p.PublicPort ? `${p.PublicPort}:` : ''}
+                          {p.PrivatePort}/{p.Type}
                         </span>
                       ))}
                     </td>
@@ -282,7 +290,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           label="Parar"
                           variant="secondary"
                           size="sm"
-                          onClick={(e) => { e.stopPropagation(); handleStop(c); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStop(c);
+                          }}
                           data-testid={`stop-${c.Id}`}
                         />
                       ) : (
@@ -290,7 +301,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           label="Iniciar"
                           variant="primary"
                           size="sm"
-                          onClick={(e) => { e.stopPropagation(); handleStart(c); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleStart(c);
+                          }}
                           data-testid={`start-${c.Id}`}
                         />
                       )}
@@ -299,7 +313,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           label="Logs"
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => { e.stopPropagation(); onOpenLogs(c.Id, name); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenLogs(c.Id, name);
+                          }}
                           data-testid={`logs-${c.Id}`}
                         />
                       )}
@@ -307,7 +324,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         label="Remover"
                         variant="danger"
                         size="sm"
-                        onClick={(e) => { e.stopPropagation(); setRemoveTarget(c); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setRemoveTarget(c);
+                        }}
                         data-testid={`remove-${c.Id}`}
                       />
                     </td>
@@ -348,14 +368,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
         footer={
           <>
             <Button label="Cancelar" variant="secondary" onClick={() => setRemoveTarget(null)} />
-            <Button label="Remover" variant="danger" onClick={handleRemoveConfirm} data-testid="confirm-remove" />
+            <Button
+              label="Remover"
+              variant="danger"
+              onClick={handleRemoveConfirm}
+              data-testid="confirm-remove"
+            />
           </>
         }
         data-testid="remove-modal"
       >
         <p>
           Tem certeza que deseja remover o container{' '}
-          <strong>{removeTarget?.Names[0]?.replace(/^\//, '')}</strong>? Esta ação não pode ser desfeita.
+          <strong>{removeTarget?.Names[0]?.replace(/^\//, '')}</strong>? Esta ação não pode ser
+          desfeita.
         </p>
       </Modal>
     </main>

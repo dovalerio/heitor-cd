@@ -9,9 +9,6 @@ import { useState, useEffect, useCallback } from 'react';
 type ZoomLevel = 80 | 90 | 100 | 110 | 125 | 150 | 175 | 200;
 
 const ZOOM_LEVELS: ZoomLevel[] = [80, 90, 100, 110, 125, 150, 175, 200];
-const MIN_ZOOM: ZoomLevel = 80;
-const MAX_ZOOM: ZoomLevel = 200;
-const STEP = 10;
 const STORAGE_KEY = 'app-zoom-level';
 
 export const useZoom = () => {
@@ -27,9 +24,9 @@ export const useZoom = () => {
   // Aplica zoom ao elemento raiz
   useEffect(() => {
     const body = document.body;
-    
+
     // Remove classes anteriores
-    ZOOM_LEVELS.forEach(level => {
+    ZOOM_LEVELS.forEach((level) => {
       body.classList.remove(`zoom-${level}`);
     });
 
@@ -44,14 +41,14 @@ export const useZoom = () => {
   }, [zoomLevel]);
 
   const increaseZoom = useCallback(() => {
-    setZoomLevel(prev => {
+    setZoomLevel((prev) => {
       const nextIndex = ZOOM_LEVELS.indexOf(prev) + 1;
       return nextIndex < ZOOM_LEVELS.length ? ZOOM_LEVELS[nextIndex] : prev;
     });
   }, []);
 
   const decreaseZoom = useCallback(() => {
-    setZoomLevel(prev => {
+    setZoomLevel((prev) => {
       const prevIndex = ZOOM_LEVELS.indexOf(prev) - 1;
       return prevIndex >= 0 ? ZOOM_LEVELS[prevIndex] : prev;
     });
@@ -83,7 +80,7 @@ export const useZoom = () => {
 const announceZoomChange = (level: ZoomLevel) => {
   const message = `Zoom alterado para ${level}%`;
   const liveRegion = document.querySelector('[aria-live="polite"]');
-  
+
   if (liveRegion) {
     liveRegion.textContent = message;
   } else {
@@ -107,7 +104,7 @@ const announceZoomChange = (level: ZoomLevel) => {
 export const useZoomKeyboardShortcuts = (
   onIncreaseZoom: () => void,
   onDecreaseZoom: () => void,
-  onResetZoom: () => void
+  onResetZoom: () => void,
 ) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

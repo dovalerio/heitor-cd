@@ -6,7 +6,8 @@ import { Images } from '@/pages/Images';
 import { Networks } from '@/pages/Networks';
 import { Logs } from '@/pages/Logs';
 import { Cloud } from '@/pages/Cloud';
-import { CommandPalette, Command } from '@/components/CommandPalette/CommandPalette';
+import type { Command } from '@/components/CommandPalette/CommandPalette';
+import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import { dockerService } from '@/services/dockerService';
 import { keymapsService } from '@/services/keymapsService';
 import { themeService } from '@/services/themeService';
@@ -37,7 +38,7 @@ const TABS: NavTab[] = [
 export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageId>('dashboard');
   const [showCommandPalette, setShowCommandPalette] = useState(false);
-  const [keymaps, setKeymaps] = useState<KeymapFile | null>(null);
+  const [, setKeymaps] = useState<KeymapFile | null>(null);
   const [isMonitoring, setIsMonitoring] = useState(true);
   const [logsTarget, setLogsTarget] = useState<{ id: string; name: string } | null>(null);
   const [announceMessage, setAnnounceMessage] = useState('');
@@ -57,8 +58,7 @@ export const App: React.FC = () => {
       console.error('[App] ✗ window.electronAPI não está disponível!');
       console.error('[App] Verifique se o preload script foi carregado corretamente.');
     } else {
-      console.log('[App] ✓ window.electronAPI está disponível');
-      console.log('[App] electronAPI:', typeof api, Object.keys(api as object));
+      console.warn('[App] ✓ window.electronAPI está disponível');
     }
   }, []);
 
@@ -110,18 +110,39 @@ export const App: React.FC = () => {
       // Ctrl+Tab / Ctrl+Shift+Tab: navegar entre abas ciclicamente
       if (e.ctrlKey && e.key === 'Tab') {
         e.preventDefault();
-        if (e.shiftKey) { navigateTo('prev'); } else { navigateTo('next'); }
-      }
-      else if (e.ctrlKey && e.key === '1') { e.preventDefault(); navigateTo('dashboard'); }
-      else if (e.ctrlKey && e.key === '2') { e.preventDefault(); navigateTo('composer'); }
-      else if (e.ctrlKey && e.key === '3') { e.preventDefault(); navigateTo('stacks'); }
-      else if (e.ctrlKey && e.key === '4') { e.preventDefault(); navigateTo('images'); }
-      else if (e.ctrlKey && e.key === '5') { e.preventDefault(); navigateTo('networks'); }
-      else if (e.altKey && e.key === '4') { e.preventDefault(); navigateTo('logs'); }
-      else if (e.ctrlKey && e.key === '6') { e.preventDefault(); navigateTo('cloud'); }
-      else if (e.ctrlKey && e.key === 'k') { e.preventDefault(); setShowCommandPalette(true); }
-      else if (e.key === 'F5') { e.preventDefault(); setAnnounceMessage('Tela atualizada.'); }
-      else if (e.ctrlKey && e.altKey && e.key === 'm') {
+        if (e.shiftKey) {
+          navigateTo('prev');
+        } else {
+          navigateTo('next');
+        }
+      } else if (e.ctrlKey && e.key === '1') {
+        e.preventDefault();
+        navigateTo('dashboard');
+      } else if (e.ctrlKey && e.key === '2') {
+        e.preventDefault();
+        navigateTo('composer');
+      } else if (e.ctrlKey && e.key === '3') {
+        e.preventDefault();
+        navigateTo('stacks');
+      } else if (e.ctrlKey && e.key === '4') {
+        e.preventDefault();
+        navigateTo('images');
+      } else if (e.ctrlKey && e.key === '5') {
+        e.preventDefault();
+        navigateTo('networks');
+      } else if (e.altKey && e.key === '4') {
+        e.preventDefault();
+        navigateTo('logs');
+      } else if (e.ctrlKey && e.key === '6') {
+        e.preventDefault();
+        navigateTo('cloud');
+      } else if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setShowCommandPalette(true);
+      } else if (e.key === 'F5') {
+        e.preventDefault();
+        setAnnounceMessage('Tela atualizada.');
+      } else if (e.ctrlKey && e.altKey && e.key === 'm') {
         e.preventDefault();
         setIsMonitoring((v) => !v);
         setAnnounceMessage(isMonitoring ? 'Monitoramento pausado.' : 'Monitoramento retomado.');
@@ -132,21 +153,21 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMonitoring, navigateTo]);
 
-  const handleOpenLogs = useCallback((id: string, name: string) => {
-    setLogsTarget({ id, name });
-    navigateTo('logs');
-  }, [navigateTo]);
+  const handleOpenLogs = useCallback(
+    (id: string, name: string) => {
+      setLogsTarget({ id, name });
+      navigateTo('logs');
+    },
+    [navigateTo],
+  );
 
   // Docker event handler passed to pages
-  const onDockerEvent = useCallback(
-    (handler: (event: DockerEvent) => void): (() => void) => {
-      window.electronAPI?.on(IPC.DOCKER_EVENT, handler as (...args: unknown[]) => void);
-      return () => {
-        window.electronAPI?.off(IPC.DOCKER_EVENT, handler as (...args: unknown[]) => void);
-      };
-    },
-    []
-  );
+  const onDockerEvent = useCallback((handler: (event: DockerEvent) => void): (() => void) => {
+    window.electronAPI?.on(IPC.DOCKER_EVENT, handler as (...args: unknown[]) => void);
+    return () => {
+      window.electronAPI?.off(IPC.DOCKER_EVENT, handler as (...args: unknown[]) => void);
+    };
+  }, []);
 
   const commands: Command[] = [
     ...TABS.map((t) => ({
@@ -248,24 +269,23 @@ export const App: React.FC = () => {
           <span className={styles.logoText}>H</span>
         </div>
 
-        <ul className={styles.navList} role="list">
+        <ul className={styles.navList}>
           {TABS.map((tab) => (
             <li key={tab.id} role="none">
               <button
                 role="tab"
                 aria-selected={currentPage === tab.id}
                 aria-label={`${tab.label} (${tab.shortcut})`}
-                className={[
-                  styles.navItem,
-                  currentPage === tab.id ? styles.navItemActive : '',
-                ]
+                className={[styles.navItem, currentPage === tab.id ? styles.navItemActive : '']
                   .filter(Boolean)
                   .join(' ')}
                 onClick={() => navigateTo(tab.id)}
                 type="button"
               >
                 <span className={styles.navLabel}>{tab.label}</span>
-                <kbd className={styles.navShortcut} aria-hidden="true">{tab.shortcut}</kbd>
+                <kbd className={styles.navShortcut} aria-hidden="true">
+                  {tab.shortcut}
+                </kbd>
               </button>
             </li>
           ))}

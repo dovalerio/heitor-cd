@@ -1,4 +1,11 @@
-import type { ContainerInfo, ImageInfo, NetworkInfo, LogLine, DockerEvent, ComposeService, StackInfo } from './docker';
+import type {
+  ContainerInfo,
+  ImageInfo,
+  NetworkInfo,
+  LogLine,
+  ComposeService,
+  StackInfo,
+} from './docker';
 
 // IPC channel names
 export const IPC = {
@@ -41,7 +48,7 @@ export const IPC = {
   APP_READY: 'app:ready',
 } as const;
 
-export type IpcChannel = typeof IPC[keyof typeof IPC];
+export type IpcChannel = (typeof IPC)[keyof typeof IPC];
 
 // Response wrapper
 export interface IpcResponse<T> {

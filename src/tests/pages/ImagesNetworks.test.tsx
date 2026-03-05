@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent, within, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { ImagesNetworks } from '../../renderer/pages/ImagesNetworks';
@@ -177,7 +177,10 @@ describe('ImagesNetworks', () => {
     await user.click(screen.getByTestId('confirm-create-net'));
 
     await waitFor(() => {
-      expect(mockDockerService.createNetwork).toHaveBeenCalledWith('my-new-net', expect.any(String));
+      expect(mockDockerService.createNetwork).toHaveBeenCalledWith(
+        'my-new-net',
+        expect.any(String),
+      );
     });
   });
 
@@ -218,7 +221,9 @@ describe('ImagesNetworks', () => {
   it('remove network button opens confirm modal', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
     // Use a non-system network (system networks bridge/host/none are disabled)
-    mockDockerService.listNetworks.mockResolvedValue([makeNetwork({ Id: 'net1', Name: 'custom-net' })]);
+    mockDockerService.listNetworks.mockResolvedValue([
+      makeNetwork({ Id: 'net1', Name: 'custom-net' }),
+    ]);
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -235,7 +240,9 @@ describe('ImagesNetworks', () => {
 
   it('confirm remove network calls removeNetwork', async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
-    mockDockerService.listNetworks.mockResolvedValue([makeNetwork({ Id: 'net1', Name: 'custom-net' })]);
+    mockDockerService.listNetworks.mockResolvedValue([
+      makeNetwork({ Id: 'net1', Name: 'custom-net' }),
+    ]);
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());

@@ -278,3 +278,195 @@ Todos os componentes (Button, Input, Toggle, Modal, Tree, etc.) importam styles 
 2. Instale dependências: `npm install`.
 3. Inicie o app: `npm start`.
 4. Garanta que o Docker esteja ativo e acessível.
+
+## 11) Qualidade de código — Lint e Formatação
+
+### Ferramentas
+
+| Ferramenta | Versão | Propósito |
+|---|---|---|
+| **ESLint** | 9.x (flat config) | Análise estática: bugs, padrões e acessibilidade |
+| **Prettier** | 3.x | Formatação consistente de código |
+| **Husky** | 9.x | Hooks de Git (pre-commit) |
+| **lint-staged** | 15.x | Executa lint/format apenas nos arquivos staged |
+
+### Scripts disponíveis
+
+```bash
+npm run lint           # Analisa src/ com ESLint (somente leitura)
+npm run lint:fix       # Analisa e corrige automaticamente o que for possível
+npm run format         # Formata todos os arquivos em src/ com Prettier
+npm run format:check   # Verifica formatação sem alterar arquivos
+```
+
+### Pre-commit automático
+
+O Husky executa `lint-staged` em todo `git commit`. Apenas os arquivos staged são processados:
+
+- **`.ts` / `.tsx`** → `eslint --fix --max-warnings=0` + `prettier --write`
+- **`.css` / `.json`** → `prettier --write`
+
+Se qualquer arquivo staged contiver erros de lint ou warnings, o commit é bloqueado.
+
+### Regras ESLint
+
+A configuração usa **flat config** (`eslint.config.mjs`) com quatro blocos:
+
+#### TypeScript (todos os arquivos `src/`)
+
+| Regra | Nível | Motivo |
+|---|---|---|
+| `@typescript-eslint/consistent-type-imports` | error | Imports de tipo devem usar `import type` para tree-shaking correto |
+| `@typescript-eslint/no-unused-vars` | warn | Variáveis declaradas e não usadas indicam dead code |
+| `@typescript-eslint/no-explicit-any` | warn | Evitar perda de tipagem; prefira `unknown` ou tipos concretos |
+
+#### React (`src/renderer/`)
+
+| Regra | Nível | Motivo |
+|---|---|---|
+| `react-hooks/rules-of-hooks` | error | Hooks só podem ser chamados no nível superior de componentes/hooks |
+| `react-hooks/exhaustive-deps` | warn | Dependências ausentes em `useCallback`/`useEffect` causam stale closures |
+| `no-console` | warn | Apenas `console.warn` e `console.error` são permitidos |
+
+#### Acessibilidade — `eslint-plugin-jsx-a11y` (`src/renderer/`)
+
+Todas as regras recomendadas são habilitadas como **error**. As principais:
+
+| Regra | O que verifica |
+|---|---|
+| `jsx-a11y/alt-text` | `<img>` sem `alt` |
+| `jsx-a11y/aria-props` | Propriedades ARIA inválidas |
+| `jsx-a11y/aria-role` | Valores de `role` inválidos |
+| `jsx-a11y/click-events-have-key-events` | `onClick` sem equivalente de teclado (`onKeyDown`/`onKeyUp`) |
+| `jsx-a11y/interactive-supports-focus` | Elemento interativo sem `tabIndex` acessível |
+| `jsx-a11y/label-has-associated-control` | `<label>` desvinculado de seu controle |
+| `jsx-a11y/no-noninteractive-element-interactions` | Handler de evento em elemento não-interativo sem justificativa |
+| `jsx-a11y/no-noninteractive-tabindex` | `tabIndex >= 0` em elemento não-interativo (exceto `role="log"` e `role="listitem"`) |
+| `jsx-a11y/no-redundant-roles` | `role` explícito igual ao implícito do elemento HTML |
+
+> **Exceções configuradas:**
+> - `role="log"` com `tabIndex={0}` é permitido — regiões de log precisam ser focáveis para scroll via teclado (técnica WCAG).
+> - `role="listitem"` com `tabIndex` condicional é permitido — necessário no modo de reordenação (Composer).
+> - `allowExpressionValues: true` — expressões condicionais como `tabIndex={moveMode ? 0 : -1}` não violam a regra.
+
+#### Testes (`src/tests/`)
+
+- `@typescript-eslint/no-explicit-any` → desativado (mocks frequentemente precisam de `any`).
+- `@typescript-eslint/no-unused-vars` → warn (mesmas regras do restante do projeto).
+- `no-console` → desativado.
+
+### Configuração do Prettier
+
+Arquivo `.prettierrc`:
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "arrowParens": "always",
+  "endOfLine": "lf"
+}
+```
+
+### Como desabilitar uma regra com justificativa
+
+Desabilitar regras ESLint inline deve ser exceção e sempre comentado:
+
+```tsx
+// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+<main onKeyDown={handleGlobalShortcuts}>
+  {/* Justificativa: `main` captura atalhos de teclado globais da página */}
+```
+
+Para elementos com múltiplas regras a desabilitar na mesma linha:
+
+```tsx
+// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions
+<article tabIndex={moveMode ? 0 : -1} onKeyDown={handleMove}>
+```
+
+Nunca use `eslint-disable` sem especificar a regra. Nunca use no topo do arquivo para esconder problemas sistêmicos.
+
+## 12) CI/CD pipeline
+
+### Visão geral
+
+O projeto usa **GitHub Actions** com dois workflows separados:
+
+| Workflow | Arquivo | Gatilho | Propósito |
+|---|---|---|---|
+| **CI** | `.github/workflows/ci.yml` | Push/PR em `main` | Lint, typecheck, testes e verificação de build |
+| **Release** | `.github/workflows/release.yml` | Tag `v*.*.*` | Empacotamento e publicação multiplataforma |
+
+### Workflow CI
+
+Executado em todo push ou pull request para `main`. Quatro jobs independentes e paralelos:
+
+```
+lint       → ESLint + Prettier check
+typecheck  → tsc --noEmit (main + renderer)
+test       → vitest --coverage (limiar 80%), artefato coverage/ salvo por 7 dias
+build      → tsc (main) + vite build (renderer), sem electron-builder
+```
+
+Todos os jobs usam `HUSKY: '0'` para desabilitar o hook de pre-commit em CI.
+
+### Workflow Release
+
+Disparado automaticamente ao fazer push de uma tag semântica:
+
+```bash
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+Executa uma matriz com três runners simultâneos:
+
+| Runner | Alvo | Artefato |
+|---|---|---|
+| `windows-latest` | NSIS installer | `release/*.exe` |
+| `macos-latest` | DMG | `release/*.dmg` |
+| `ubuntu-latest` | AppImage | `release/*.AppImage` |
+
+Cada job compila o processo main, faz o build do renderer e chama `electron-builder --publish always`. Os artefatos são publicados automaticamente em um **GitHub Release** associado à tag via `GH_TOKEN`.
+
+> **Assinatura de código:** `CSC_IDENTITY_AUTO_DISCOVERY=false` desabilita a busca automática por certificados de assinatura. Para distribuição pública, configure `CSC_LINK` e `CSC_KEY_PASSWORD` como secrets no repositório.
+
+### Scripts adicionados
+
+```bash
+npm run build:renderer    # vite build — gera dist/renderer/
+npm run typecheck:main    # tsc -p tsconfig.json --noEmit — checa processo main
+```
+
+### Configuração electron-builder
+
+O campo `"build"` em `package.json` define o empacotamento:
+
+```json
+{
+  "appId": "com.heitorcd.app",
+  "productName": "Heitor CD",
+  "directories": { "output": "release" },
+  "files": ["dist/**/*", "package.json"],
+  "win":   { "target": "nsis" },
+  "mac":   { "target": "dmg" },
+  "linux": { "target": "AppImage" },
+  "publish": { "provider": "github" }
+}
+```
+
+Os artefatos são gerados a partir dos diretórios compilados:
+- `dist/main/` — processo main (TypeScript → CommonJS)
+- `dist/renderer/` — processo renderer (Vite → ESNext)
+
+### Secrets necessários
+
+| Secret | Onde configurar | Uso |
+|---|---|---|
+| `GITHUB_TOKEN` | Automático pelo Actions | Publicar release e artefatos |
+| `CSC_LINK` _(opcional)_ | Settings → Secrets | Certificado de assinatura (macOS/Windows) |
+| `CSC_KEY_PASSWORD` _(opcional)_ | Settings → Secrets | Senha do certificado |

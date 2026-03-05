@@ -73,7 +73,7 @@ const normaliseKey = (raw: string): string => {
  * Modifiers are case-insensitive. The final token is the key.
  */
 export const parseShortcut = (shortcutStr: string): ParsedShortcut => {
-  const tokens = shortcutStr.split('+').map(t => t.trim());
+  const tokens = shortcutStr.split('+').map((t) => t.trim());
 
   let ctrl = false;
   let alt = false;

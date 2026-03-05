@@ -38,21 +38,26 @@ export const Logs: React.FC<LogsProps> = ({
     }
   }, [dockerService]);
 
-  useEffect(() => { fetchContainers(); }, [fetchContainers]);
+  useEffect(() => {
+    fetchContainers();
+  }, [fetchContainers]);
 
-  const fetchLogs = useCallback(async (id: string) => {
-    if (!id) return;
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await dockerService.getContainerLogs(id, tail, showStderr);
-      setLogs(data);
-    } catch (e: unknown) {
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }, [dockerService, tail, showStderr]);
+  const fetchLogs = useCallback(
+    async (id: string) => {
+      if (!id) return;
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await dockerService.getContainerLogs(id, tail, showStderr);
+        setLogs(data);
+      } catch (e: unknown) {
+        setError((e as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dockerService, tail, showStderr],
+  );
 
   useEffect(() => {
     if (selectedId) fetchLogs(selectedId);
@@ -83,7 +88,9 @@ export const Logs: React.FC<LogsProps> = ({
         <h1 className={styles.title}>Logs</h1>
         <div className={styles.toolbarActions}>
           <div className={styles.selectWrapper}>
-            <label htmlFor="container-select" className={styles.selectLabel}>Container:</label>
+            <label htmlFor="container-select" className={styles.selectLabel}>
+              Container:
+            </label>
             <select
               id="container-select"
               className={styles.select}
@@ -100,7 +107,9 @@ export const Logs: React.FC<LogsProps> = ({
             </select>
           </div>
           <div className={styles.selectWrapper}>
-            <label htmlFor="tail-select" className={styles.selectLabel}>Linhas:</label>
+            <label htmlFor="tail-select" className={styles.selectLabel}>
+              Linhas:
+            </label>
             <select
               id="tail-select"
               className={styles.select}
@@ -114,7 +123,12 @@ export const Logs: React.FC<LogsProps> = ({
               <option value={1000}>1000</option>
             </select>
           </div>
-          <Toggle label="Apenas STDERR" checked={showStderr} onChange={setShowStderr} data-testid="stderr-toggle" />
+          <Toggle
+            label="Apenas STDERR"
+            checked={showStderr}
+            onChange={setShowStderr}
+            data-testid="stderr-toggle"
+          />
           <Toggle label="Auto-scroll" checked={autoScroll} onChange={setAutoScroll} />
           {selectedId && (
             <Button label="Atualizar" variant="ghost" onClick={() => fetchLogs(selectedId)} />
@@ -129,14 +143,20 @@ export const Logs: React.FC<LogsProps> = ({
         </div>
       </div>
 
-      {error && <div role="alert" className={styles.error}>{error}</div>}
+      {error && (
+        <div role="alert" className={styles.error}>
+          {error}
+        </div>
+      )}
 
       {!selectedId ? (
         <div className={styles.empty}>
           <p>Selecione um container para visualizar os logs.</p>
         </div>
       ) : loading ? (
-        <div role="status" className={styles.loading} aria-label="Carregando logs...">Carregando logs...</div>
+        <div role="status" className={styles.loading} aria-label="Carregando logs...">
+          Carregando logs...
+        </div>
       ) : (
         <div className={styles.logContainer}>
           <div
@@ -147,12 +167,12 @@ export const Logs: React.FC<LogsProps> = ({
             <span className={styles.logCount}>{visibleLogs.length} linhas</span>
           </div>
           <div
+            tabIndex={0}
             role="log"
             aria-label={`Logs do container ${displayName}`}
             aria-live="polite"
             aria-relevant="additions"
             className={styles.logOutput}
-            tabIndex={0}
           >
             {visibleLogs.length === 0 ? (
               <span className={styles.noLogs}>Sem logs para exibir.</span>

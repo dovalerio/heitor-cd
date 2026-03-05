@@ -31,7 +31,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const filtered = commands.filter(
     (cmd) =>
       cmd.label.toLowerCase().includes(query.toLowerCase()) ||
-      cmd.description?.toLowerCase().includes(query.toLowerCase())
+      cmd.description?.toLowerCase().includes(query.toLowerCase()),
   );
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       cmd.action();
       onClose();
     },
-    [onClose]
+    [onClose],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -143,14 +143,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                   .filter(Boolean)
                   .join(' ')}
                 onClick={() => execute(cmd)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') execute(cmd);
+                }}
               >
                 <span className={styles.itemLabel}>{cmd.label}</span>
                 {cmd.description && (
                   <span className={styles.itemDescription}>{cmd.description}</span>
                 )}
-                {cmd.shortcut && (
-                  <kbd className={styles.itemShortcut}>{cmd.shortcut}</kbd>
-                )}
+                {cmd.shortcut && <kbd className={styles.itemShortcut}>{cmd.shortcut}</kbd>}
               </li>
             ))}
           </ul>

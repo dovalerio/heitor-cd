@@ -23,12 +23,16 @@ import type {
  */
 async function invoke<T>(channel: string, args?: unknown): Promise<T> {
   // Verificação de segurança: garante que electronAPI foi exposto pelo preload
-  const electronAPI = (window as unknown as { electronAPI?: { invoke: (channel: string, args?: unknown) => Promise<IpcResponse<T>> } }).electronAPI;
-  
+  const electronAPI = (
+    window as unknown as {
+      electronAPI?: { invoke: (channel: string, args?: unknown) => Promise<IpcResponse<T>> };
+    }
+  ).electronAPI;
+
   if (!electronAPI || typeof electronAPI.invoke !== 'function') {
     throw new Error(
       'electronAPI não está disponível. Certifique-se de que o preload script foi carregado corretamente. ' +
-      'Verifique se contextIsolation está habilitado e o preload path está correto.'
+        'Verifique se contextIsolation está habilitado e o preload path está correto.',
     );
   }
 
