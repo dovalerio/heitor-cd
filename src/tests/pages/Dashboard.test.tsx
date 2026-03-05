@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Dashboard } from '../../renderer/pages/Dashboard';
@@ -37,18 +37,10 @@ describe('Dashboard', () => {
       stopContainer: vi.fn().mockResolvedValue(undefined),
       removeContainer: vi.fn().mockResolvedValue(undefined),
     };
-    vi.useFakeTimers();
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('renders "Dashboard" heading', async () => {
+  it('renders "Dashboard" heading', () => {
     render(<Dashboard dockerService={mockDockerService} />);
-    act(() => {
-      vi.runAllTimers();
-    });
     expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument();
   });
 
@@ -81,7 +73,7 @@ describe('Dashboard', () => {
   });
 
   it('toggling "Mostrando todos" calls listContainers(true)', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([]);
     render(<Dashboard dockerService={mockDockerService} />);
 
@@ -97,7 +89,7 @@ describe('Dashboard', () => {
   });
 
   it('clicking "Parar" on a running container calls stopContainer', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([runningContainer]);
     render(<Dashboard dockerService={mockDockerService} />);
 
@@ -112,7 +104,7 @@ describe('Dashboard', () => {
   });
 
   it('clicking "Iniciar" on a stopped container calls startContainer', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([stoppedContainer]);
     render(<Dashboard dockerService={mockDockerService} />);
 
@@ -127,7 +119,7 @@ describe('Dashboard', () => {
   });
 
   it('remove button opens confirm modal', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([runningContainer]);
     render(<Dashboard dockerService={mockDockerService} />);
 
@@ -140,7 +132,7 @@ describe('Dashboard', () => {
   });
 
   it('confirming removal calls removeContainer', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([runningContainer]);
     render(<Dashboard dockerService={mockDockerService} />);
 
@@ -159,7 +151,7 @@ describe('Dashboard', () => {
   });
 
   it('search filters containers by name', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listContainers.mockResolvedValue([runningContainer, stoppedContainer]);
     render(<Dashboard dockerService={mockDockerService} />);
 

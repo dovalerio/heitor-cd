@@ -22,7 +22,7 @@ const mockCommands: Command[] = [
 
 describe('CommandPalette', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {

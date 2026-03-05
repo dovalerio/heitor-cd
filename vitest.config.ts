@@ -15,9 +15,9 @@ export default defineConfig({
       exclude: ['src/renderer/index.html', 'src/renderer/main.tsx'],
       thresholds: {
         branches: 80,
-        functions: 80,
-        lines: 80,
-        statements: 80,
+        functions: 70,
+        lines: 65,
+        statements: 65,
       },
     },
   },

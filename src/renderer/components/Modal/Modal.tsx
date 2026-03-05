@@ -29,12 +29,10 @@ export const Modal: React.FC<ModalProps> = ({
     if (isOpen) {
       previousFocusRef.current = document.activeElement as HTMLElement;
       // Focus the first focusable element inside the modal
-      setTimeout(() => {
-        const focusable = dialogRef.current?.querySelector<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        focusable?.focus();
-      }, 50);
+      const focusable = dialogRef.current?.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      focusable?.focus();
     } else {
       previousFocusRef.current?.focus();
     }

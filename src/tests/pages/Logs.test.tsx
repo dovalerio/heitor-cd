@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Logs } from '../../renderer/pages/Logs';
 import type { ContainerInfo, LogLine } from '../../types/docker';
 
@@ -46,18 +46,6 @@ describe('Logs', () => {
       listContainers: vi.fn().mockResolvedValue([makeContainer()]),
       getContainerLogs: vi.fn().mockResolvedValue([stdoutLine, stderrLine]),
     };
-    vi.useFakeTimers();
-
-    // Mock clipboard
-    Object.assign(navigator, {
-      clipboard: {
-        writeText: vi.fn().mockResolvedValue(undefined),
-      },
-    });
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   it('renders "Logs" heading', () => {
@@ -73,13 +61,12 @@ describe('Logs', () => {
   });
 
   it('selecting a container calls getContainerLogs', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Logs dockerService={mockDockerService} />);
 
-    // Wait for containers to load
+    // Wait for container options to load
     await waitFor(() => {
-      const select = screen.getByRole('combobox', { name: 'Selecionar container' });
-      expect(select).not.toHaveDisplayValue('— Selecione —');
+      expect(screen.getByRole('option', { name: /test/ })).toBeInTheDocument();
     });
 
     const select = screen.getByRole('combobox', { name: 'Selecionar container' });
@@ -95,7 +82,7 @@ describe('Logs', () => {
   });
 
   it('log lines are rendered in the output', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Logs dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -112,7 +99,7 @@ describe('Logs', () => {
   });
 
   it('STDERR toggle filters to only stderr lines', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Logs dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -135,7 +122,9 @@ describe('Logs', () => {
   });
 
   it('Copy STDERR button calls navigator.clipboard.writeText', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
+    // userEvent.setup() installs its own clipboard stub; spy on it so toHaveBeenCalledWith works
+    vi.spyOn(navigator.clipboard, 'writeText');
     render(<Logs dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -165,7 +154,7 @@ describe('Logs', () => {
       }),
     );
 
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Logs dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -195,7 +184,7 @@ describe('Logs', () => {
   });
 
   it('log output area has role="log"', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Logs dockerService={mockDockerService} />);
 
     await waitFor(() => {

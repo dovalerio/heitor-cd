@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Images } from '../../renderer/pages/Images';
 import type { ImageInfo } from '../../types/docker';
 
@@ -29,11 +29,6 @@ describe('Images', () => {
       removeImage: vi.fn().mockResolvedValue(undefined),
       pullImage: vi.fn().mockResolvedValue(undefined),
     };
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   it('renders "Imagens" heading', async () => {
@@ -50,7 +45,7 @@ describe('Images', () => {
   });
 
   it('remove image button opens confirm modal', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Images dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.getByText('nginx:latest')).toBeInTheDocument());
 
@@ -59,7 +54,7 @@ describe('Images', () => {
   });
 
   it('confirming remove image calls removeImage', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Images dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.getByText('nginx:latest')).toBeInTheDocument());
 
@@ -72,7 +67,7 @@ describe('Images', () => {
   });
 
   it('pull image modal: open, type name, confirm calls pullImage', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Images dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
@@ -89,7 +84,7 @@ describe('Images', () => {
   });
 
   it('cancel button on pull image modal closes it', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Images dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ImagesNetworks } from '../../renderer/pages/ImagesNetworks';
 import type { ImageInfo, NetworkInfo } from '../../types/docker';
 
@@ -47,11 +47,6 @@ describe('ImagesNetworks', () => {
       pullImage: vi.fn().mockResolvedValue(undefined),
       createNetwork: vi.fn().mockResolvedValue({ id: 'new-net' }),
     };
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   it('renders "Images & Networks" heading', async () => {
@@ -69,7 +64,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('tab "Redes" shows network table when clicked', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -90,7 +85,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('clicking Networks tab sets aria-selected=true on it', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -103,7 +98,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('remove image button opens confirm modal', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -117,7 +112,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('confirming remove image calls removeImage', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => {
@@ -135,7 +130,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('pull image modal: open, type name, confirm calls pullImage', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -157,7 +152,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('create network modal: type name, confirm calls createNetwork', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -185,7 +180,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('tree toggle shows tree for networks tab', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -204,7 +199,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('cancel button on pull image modal closes it', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<ImagesNetworks dockerService={mockDockerService} />);
 
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
@@ -219,7 +214,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('remove network button opens confirm modal', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     // Use a non-system network (system networks bridge/host/none are disabled)
     mockDockerService.listNetworks.mockResolvedValue([
       makeNetwork({ Id: 'net1', Name: 'custom-net' }),
@@ -239,7 +234,7 @@ describe('ImagesNetworks', () => {
   });
 
   it('confirm remove network calls removeNetwork', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listNetworks.mockResolvedValue([
       makeNetwork({ Id: 'net1', Name: 'custom-net' }),
     ]);

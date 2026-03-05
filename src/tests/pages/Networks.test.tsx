@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Networks } from '../../renderer/pages/Networks';
 import type { NetworkInfo } from '../../types/docker';
 
@@ -30,11 +30,6 @@ describe('Networks', () => {
       createNetwork: vi.fn().mockResolvedValue({ id: 'new-net' }),
       removeNetwork: vi.fn().mockResolvedValue(undefined),
     };
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
   });
 
   it('renders "Redes" heading', async () => {
@@ -51,7 +46,7 @@ describe('Networks', () => {
   });
 
   it('create network modal: type name, confirm calls createNetwork', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Networks dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
@@ -71,7 +66,7 @@ describe('Networks', () => {
   });
 
   it('tree toggle shows network tree', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     render(<Networks dockerService={mockDockerService} />);
     await waitFor(() => expect(screen.queryByRole('status')).not.toBeInTheDocument());
 
@@ -82,7 +77,7 @@ describe('Networks', () => {
   });
 
   it('remove network button opens confirm modal', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listNetworks.mockResolvedValue([
       makeNetwork({ Id: 'net1', Name: 'custom-net' }),
     ]);
@@ -95,7 +90,7 @@ describe('Networks', () => {
   });
 
   it('confirm remove network calls removeNetwork', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime.bind(vi) });
+    const user = userEvent.setup();
     mockDockerService.listNetworks.mockResolvedValue([
       makeNetwork({ Id: 'net1', Name: 'custom-net' }),
     ]);
