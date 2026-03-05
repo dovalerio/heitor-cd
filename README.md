@@ -61,9 +61,12 @@ Todas as funções do app devem possuir um `actionId` e um atalho padrão no arq
 | `app.goDashboard` | `Ctrl+1` | Ir para Dashboard |
 | `app.goComposer` | `Ctrl+2` | Ir para Composer |
 | `app.goStacks` | `Ctrl+3` | Ir para Stacks |
-| `app.goImagesNetworks` | `Ctrl+4` | Ir para Images & Networks |
+| `app.goImages` | `Ctrl+4` | Ir para Imagens |
+| `app.goNetworks` | `Ctrl+5` | Ir para Redes |
 | `app.goLogs` | `Alt+4` | Ir para tela de Logs |
-| `app.goCloud` | `Ctrl+5` | Ir para Cloud (EKS) |
+| `app.goCloud` | `Ctrl+6` | Ir para Cloud (EKS) |
+| `app.nextTab` | `Ctrl+Tab` | Avançar para a próxima aba (cíclico) |
+| `app.prevTab` | `Ctrl+Shift+Tab` | Voltar para a aba anterior (cíclico) |
 | `app.openCommandPalette` | `Ctrl+K` | Abrir paleta de comandos |
 | `app.focusSearch` | `Ctrl+F` | Focar busca da tela atual |
 | `app.refreshCurrentView` | `F5` | Atualizar dados da tela atual |
